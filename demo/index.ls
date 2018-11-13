@@ -35,3 +35,18 @@ update = ->
 update!
 
 onchange = -> update!
+
+resize = ->
+  [col, row] = Array.from(document.querySelectorAll(\input)).map(->+it.value)
+  if !isNaN(row) and row > 1 =>
+    if row < count.row => for r from count.row - 1 to row by -1 => hot.alter("remove_row", r)
+    if row > count.row => for r from count.row til row => hot.alter("insert_row",r)
+    count.row = row
+  if !isNaN(col) and col > 1 =>
+    if col < count.col => for r from count.col - 1 to col by -1 => hot.alter("remove_col", r)
+    if col > count.col => for r from count.col til col => hot.alter("insert_col",r)
+    count.col = col
+  hot.updateSettings cells: (r, c) ->
+    return if r < count.row and c < count.col => {readOnly: false} else {readOnly: true}
+
+Array.from(document.querySelectorAll(\input)).map (n) -> n.addEventListener \keyup, -> resize!

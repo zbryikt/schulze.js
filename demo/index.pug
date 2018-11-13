@@ -13,5 +13,11 @@ html
     .title
       h1 Schulze Voting Method
       p change the scores in the grid to see how ranks are changed for each candidates
-    #grid: .inner
+    #grid
+      .input
+        input(placeholder="columns")
+        span &nbsp;&times;&nbsp;
+        input(placeholder="rows")
+      br
+      .inner
     script(type="text/javascript",src="index.js")
