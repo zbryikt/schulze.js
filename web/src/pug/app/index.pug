@@ -1,0 +1,23 @@
+extends /base.pug
+block head
+  +css("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/css/pikaday.min.css")
+  +css("/assets/handsontable/dist/handsontable.css")
+  +css("/css/app/index.css")
+block body
+  .title
+    h1 Schulze Voting Method
+    p change the scores in the grid to see how ranks are changed for each candidates
+  #grid
+    .input
+      input(placeholder="columns")
+      span &nbsp;&times;&nbsp;
+      input(placeholder="rows")
+    br
+    .inner
+block script
+  +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
+  +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
+  +script("https://cdn.jsdelivr.net/npm/numbro@2/dist/numbro.min.js")
+  +script("/assets/handsontable/dist/handsontable.js")
+  +script("/assets/schulze.js/main.js")
+  +script("/js/app/index.js")
