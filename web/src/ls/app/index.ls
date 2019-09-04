@@ -7,6 +7,13 @@ data = [
   ["Itachi", 50, 20, '', 30],
 ]
 
+versusRenderer = (instance,td,row,col,prop,value,cellProperties) ->
+  td.classList.remove \win, \lose, \tie
+  if value > local.judges.length / 2 => td.classList.add \win
+  else if value < local.judges.length / 2 => td.classList.add \lose
+  else => td.classList.add \tie
+Handsontable.renderers.registerRenderer('versusRenderer', versusRenderer)
+
 hot = new Handsontable(document.querySelector('#grid .inner'), {
   data: data,
   rowHeaders: true,
@@ -18,19 +25,33 @@ hot = new Handsontable(document.querySelector('#grid .inner'), {
   colWidths: 100
 })
 
+detailtable = new Handsontable(document.querySelector('#detail-grid .inner'), {
+  rowHeaders: true,
+  colHeaders: true,
+  filters: true,
+  dropdownMenu: true
+  rowHeights: 35
+  colWidths: 100
+  cell: (r, c) -> return { renderer: \versusRenderer }
+})
 
 count = {row: hot.countRows!, col: hot.countCols!}
 hot.alter("insert_col",count.col)
 hot.updateSettings cells: (r, c) -> if c == count.col => return {readOnly: true} else return {}
 
+local = {}
 update = ->
   votes = JSON.parse(JSON.stringify(data))
   votes.map -> it.splice it.length - 1, 1
-  ret = schulze.from-array votes, {}
+  local.judges = judges = votes.0.slice 1
+  {rank, detail} = schulze.from-array votes, {}
   hot.setDataAtCell 0, count.col, 'Rank'
-  for i from 0 til ret.length => 
-    cand = ret[i]
+  for i from 0 til rank.length =>
+    cand = rank[i]
     hot.setDataAtCell (cand.idx + 1), (count.col), cand.rank
+  for i from 0 til detail.length =>
+    for j from 0 til detail[i].length =>
+      detailtable.setDataAtCell i, j, detail[i][j]
 
 update!
 

@@ -4,16 +4,20 @@ block head
   +css("/assets/handsontable/dist/handsontable.css")
   +css("/css/app/index.css")
 block body
-  .title
+  .text-center
     h1 Schulze Voting Method
     p change the scores in the grid to see how ranks are changed for each candidates
-  #grid
-    .input
-      input(placeholder="columns")
-      span &nbsp;&times;&nbsp;
-      input(placeholder="rows")
-    br
-    .inner
+  .w-1024.rwd.mx-auto
+    #grid.text-center
+      .input.mb-4
+        input(placeholder="columns")
+        span &nbsp;&times;&nbsp;
+        input(placeholder="rows")
+      .inner.d-inline-block
+    #detail-grid.mt-4.text-center
+      h3 Detail Versus Result
+      .inner.d-inline-block
+
 block script
   +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
   +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
