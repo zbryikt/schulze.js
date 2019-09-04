@@ -61,6 +61,7 @@ data-validate = (rank, options) ->
 from-csv = (csv, options = {}) ->
   options = {} <<< input-default-options <<< options
   data = papaparse.parse(csv).data
+  data = data.filter -> it.filter(->it).length
   rank = {}
   [candidate-names, judge-names] = [
     data.map(->it.0), JSON.parse(JSON.stringify(data.0))
@@ -70,12 +71,10 @@ from-csv = (csv, options = {}) ->
   else [[data[i][j] for j from 1 til data.0.length] for i from 1 til data.length]
   for i from 0 til judge-names.length => rank[judge-names[i]] = score[i]
   data-validate rank, options
-  return compute {rank, candidate-names, judge-names}
+  return compute {data: rank, candidates: candidate-names, judges: judge-names}
 
-compute = ({rank, candidate-names, judge-names}) ->
-  data = rank
-  judges = [k for k of data]
-  size = data[judges.0].length
+compute = ({data, candidates, judges}) ->
+  size = candidates.length
 
   d = for i from 0 til size => for j from 0 til size => 0
   p = for i from 0 til size => for j from 0 til size => 0
@@ -99,8 +98,8 @@ compute = ({rank, candidate-names, judge-names}) ->
     for j from 0 til size =>
       a = p[i][j]
       b = p[j][i]
-      #p[i][j] -= b
-      #p[j][i] -= a
+      p[i][j] -= b
+      p[j][i] -= a
 
   rank = []
   hash = {}
@@ -121,7 +120,13 @@ compute = ({rank, candidate-names, judge-names}) ->
     sum += v.count
   rank.map (d,i) ->
     d.rank = hash[d.count].rank
-    d.name = candidate-names[d.idx]
-  return rank
+    d.name = candidates[d.idx]
+
+  detail = []
+  for i from 0 til size =>
+    list = [rank[i].name] ++ [d[rank[i].idx][rank[j].idx] for j from 0 til size]
+    detail.push list
+
+  return {rank, detail}
 
 module.exports = {compute, from-csv, from-json, to-csv}

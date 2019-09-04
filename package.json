@@ -1,6 +1,7 @@
 {
   "author": "Kirby Wu",
   "name": "schulze.js",
+  "license": "MIT",
   "description": "Schulze method JavaScript implementation.",
   "version": "0.0.1",
   "homepage": "https://github.com/zbryikt/schulze.js",
@@ -19,5 +20,8 @@
     "LiveScript": ">=1.2.0",
     "uglify-js": "=3.2.0",
     "template": "github:zbryikt/template#v2"
+  },
+  "dependencies": {
+    "papaparse": "=5.0.0"
   }
 }
