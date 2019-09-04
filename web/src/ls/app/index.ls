@@ -26,7 +26,7 @@ hot.updateSettings cells: (r, c) -> if c == count.col => return {readOnly: true}
 update = ->
   votes = JSON.parse(JSON.stringify(data))
   votes.map -> it.splice it.length - 1, 1
-  ret = from-array votes, {}
+  ret = schulze.from-array votes, {}
   hot.setDataAtCell 0, count.col, 'Rank'
   for i from 0 til ret.length => 
     cand = ret[i]

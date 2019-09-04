@@ -33,7 +33,7 @@ update = function(){
   votes.map(function(it){
     return it.splice(it.length - 1, 1);
   });
-  ret = fromArray(votes, {});
+  ret = schulze.fromArray(votes, {});
   hot.setDataAtCell(0, count.col, 'Rank');
   for (i$ = 0, to$ = ret.length; i$ < to$; ++i$) {
     i = i$;
