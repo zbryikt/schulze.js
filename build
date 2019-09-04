@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+mkdir -p dist
+echo "build src/schulze.ls -> dist/schulze.js ..."
+./node_modules/.bin/lsc -cbp src/schulze.ls > dist/schulze.js
+echo "minifying schulze.js ..."
+./node_modules/.bin/uglifyjs dist/schulze.js > dist/schulze.min.js
+echo "update web assets ..."
+mkdir -p web/static/assets/schulze.js/
+cp dist/* web/static/assets/schulze.js/
+echo "done."
