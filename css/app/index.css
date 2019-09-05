@@ -14,15 +14,12 @@ td,
 th {
   vertical-align: middle !important;
 }
-.title {
-  text-align: center;
-  margin: 20px;
-  border-bottom: 1px solid #ccc;
+.win {
+  background: #9f9 !important;
 }
-#grid {
-  text-align: center;
+.lose {
+  background: #f99 !important;
 }
-#grid .inner {
-  display: inline-block;
-  text-align: center;
+.tie {
+  background: #eee !important;
 }
