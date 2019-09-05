@@ -6,3 +6,6 @@ body {
   padding: 0;
   font-size: 18px;
 }
+.handsontable td {
+  vertical-align: middle;
+}
