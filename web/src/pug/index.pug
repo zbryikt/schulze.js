@@ -1,34 +1,125 @@
 extends /base.pug
+block head
+  +css("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/css/pikaday.min.css")
+  +css("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.css")
 block body
   body
-    #root
-      .text-center
+
+    .w-100.h-50.vertical-center.bg-light
+      .text-center.w-100
         h1 Schulze.js
         p JS implementation of Schulze method for your Condorcet election method.
-      br
-      .text-center
-        a.btn.btn-primary.btn-lg.mr-2(href="http://github.com/zbryikt/schulze.js") JS Library
-        .btn.btn-primary.btn-lg.mr-2 G Sheet Addon #[small: .badge.badge-light Coming Soon]
-        a.btn.btn-primary.btn-lg(href="demo/") Online Demo
-      +nbr(1)
-      hr
-      br
-      h2.text-center What is Schulze.js?
-      p Schulze.js is an open source#[small (MIT License)] JS implementation of Schulze method, which is one of the Condorcet election method that elects the candidate that would win a majority of the vote in all of the head-to-head elections against each of the other candidates, whenever there is such a candidate.
+        a.btn.btn-primary.m-2(href="/app/") Try It Online
+        a.btn.btn-outline-dark.m-2(href="http://github.com/zbryikt/schulze.js/") Github Repo
+        .btn.btn-outline-secondary.disabled.m-2.has-tips
+          span G Sheet Addon
+          .hover-tip.bottom.tip-sm Coming Soon
 
-      +nbr(2)
-      h2.text-center How to use Schulze.js?
+    .w-1024.mx-auto.rwd.h-100.typeset.heading-contrast.pt-4
+      h2 What's Schulze.js
+      p Schulze.js is an open source #[sup: small MIT License] JS implementation of the electoral system #[a(href="https://en.wikipedia.org/wiki/Schulze_method",target="_blank") Schulze method], which is one of the Condorcet election method that elects the candidate that would win a majority of the vote in all of the head-to-head elections against each of the other candidates, whenever there is such a candidate.
+      h2 Install
+      p Schulze.js is available both for browser or Node.js.
+      h3 Browser
+      p Simply #[a(href="https://github.com/zbryikt/schulze.js/") download schulze.js or schulze.min.js] from github and include it in your html:
+      .example.code-block &lt;script src="<path-to>/schulze.js"&;gt;&lt;/script&gt;
+      h3 Node.js
+      p First install this module:
+      .example.code-block npm install --save zbryikt/schulze.js
+      p Then, require it in your script:
+      .example.code-block require("schulze.js")
 
-      p First you need data, formatted in the same layout of the following CSV example:
-      br
-      .text-center
-        img(src="/assets/img/layout.png")
-        br
-        small row-based data example
+      h2 Usage
+      p Say you have a form of scores for candidates provided by different judges looking like this:
+      #sample-form.text-center.text-sm.mb-4: .inner
 
-      +nbr(3)
-      h3.text-center Use it in Google Spreadsheet
-      p You can use Schulze.js as a spreadsheet function once you got it installed. To use it, invoke the function "schulze" with following parameters:
+      p And it's stored in either CSV format or a 2D Array:
+      .row.text-sm.example
+        .col-md
+          h6 CSV
+          .code-block.
+            "Candidates", "John", "Joe", "David", "Mary"
+            "Cand 1", 90, 60, 80, 70
+            "Cand 2", 80, 50, 70, 60
+            "Cand 3", 70, 40, 60, 50
+            "Cand 4", 60, '', 50, 40
+            "Cand 5", 50, 20, '', 30
+
+        .col-md
+          h6 Array
+          .code-block.
+            [ ["Candidates", "John", "Joe", "David", "Mary"],
+              ["Cand 1", 90, 60, 80, 70],
+              ["Cand 2", 80, 50, 70, 60],
+              ["Cand 3", 70, 40, 60, 50],
+              ["Cand 4", 60, '', 50, 40],
+              ["Cand 5", 50, 20, '', 30] ]
+
+      p You can calculate the rank with Schulze method by passing the data into following functions:
+      .example.code-block.
+        ret = schulze.fromCsv(data, config);    /* from CSV */
+        ret = schulze.fromArray(data, config);  /* from Array */
+      p the returned value is an object with two members #[code rank] and #[code detail]:
+      .example.row
+        .col-md
+          h6 rank
+          p list of objects for each candidates. Each object contains following fields
+          ul
+            li #[code idx] - original index in data
+            li #[code count] - count of winning vote against others
+            li #[code rank] - rank in all candidates
+            li #[code name] - name of candidate
+        .col-md: .h-100.vertical-center
+          .text-sm: .code-block.
+            [
+              { idx: 0, count: 4, rank: 1, name: "Candidate 1" },
+              { idx: 1, count: 3, rank: 2, name: "Candidate 2" },
+              { idx: 2, count: 2, rank: 3, name: "Candidate 3" },
+              { idx: 3, count: 1, rank: 4, name: "Candidate 4" },
+              { idx: 4, count: 0, rank: 5, name: "Candidate 5" }
+            ]
+      .example.row
+        .col-md
+          h6 detail
+          p count of winning votes for every candidate against other candidates.
+          ul
+            li 1st value - candidate rank
+            li 2nd value - candidate name
+            li other values - winning vote count against others.
+        .col-md: .h-100.vertical-center
+          .text-sm: .code-block.
+            [
+              [ 1, "Candidate 1", 0, 4, 4, 4, 4 ],
+              [ 2, "Candidate 2", 0, 0, 4, 4, 4 ],
+              [ 3, "Candidate 3", 0, 0, 0, 4, 4 ],
+              [ 4, "Candidate 4", 0, 0, 0, 0, 3 ],
+              [ 5, "Candidate 5", 0, 0, 0, 1, 0 ]
+            ]
+
+      h3 Output
+      p Schulze.js provides a handy #[code toCsv] function for you to generate result in CSV:
+      .example.code-block.
+        schulze.toCsv(rank, config);
+      p where #[code rank] is the rank member of returned object generated by #[code fromCsv] or #[code fromArray] function calls.
+
+      h2 Configuration
+      p Schulze.js provides some additional configurations so you can tweak its behavior based on your input and desired output.
+
+      h3 Input Options
+      p Input options are available in #[code fromCsv] and #[code fromArray].
+      ul
+        li #[code isRowBased] - see next section. default #[code true]
+        li #[code isRank] - is input data actually ranking order. default #[code false]
+        li #[code higherIsBetter] - is higher input value means better in score. default #[code true]
+
+      h3 Output Options
+      p Output options are available in #[code toCsv] function.
+      ul
+        li #[code sort] - sort result based on ranking. default #[code false].
+
+
+      h2 Use in Google Sheet
+      p While not yet available, it's possible to use Schulze.js as a google sheet function once you install it after the extension get approved by Google team. To use it, call the function "schulze" with following parameters:
       ul
         li #[code input] - Range of the above data, such as "A1:E7"
         li #[code isRowBased] - default true. only set it to false if you got your data transposed.
@@ -44,12 +135,13 @@ block body
         li selecting the overall data ranges including judges and candidates
         li in the menu bar, click #[code Add-ons] → #[code Condorcet] → #[code Condorcet / Schulze Mtehod]
         li the result will be append after the last column of the selected range.
-      +nbr(5)
-      h3.text-center Use it in NodeJS / Browser
-      p.text-center TBD
-      +nbr(5)
-      hr
-      h3.text-center License
-      p MIT License, Kirby T. Wu 2018
+      h3 License
+      p This library is open sourced under #[a(href="https://github.com/zbryikt/schulze.js/blob/master/LICENSE",target="_blank") MIT License]. Source code can be found in its #[a(href="https://github.com/zbryikt/schulze.js/") Github Repository]. For bug reports, pull requests or feature suggestions, please also firing issues / pull requests in the repository.
+      +nbr(3)
 
-
+block script
+  +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
+  +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
+  +script("https://cdn.jsdelivr.net/npm/numbro@2/dist/numbro.min.js")
+  +script("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.js")
+  +script("/js/index.js")
