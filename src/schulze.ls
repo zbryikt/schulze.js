@@ -139,7 +139,7 @@
 
     detail = []
     for i from 0 til size =>
-      list = [rank[i].name] ++ [d[rank[i].idx][rank[j].idx] for j from 0 til size]
+      list = [rank[i].rank, rank[i].name] ++ [d[rank[i].idx][rank[j].idx] for j from 0 til size]
       detail.push list
 
     return {rank, detail}

@@ -322,7 +322,7 @@
     detail = [];
     for (i$ = 0; i$ < size; ++i$) {
       i = i$;
-      list = [rank[i].name].concat((fn$()));
+      list = [rank[i].rank, rank[i].name].concat((fn$()));
       detail.push(list);
     }
     return {
