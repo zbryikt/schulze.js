@@ -1,27 +1,31 @@
 extends /base.pug
 block head
   +css("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/css/pikaday.min.css")
-  +css("/assets/handsontable/dist/handsontable.css")
+  //-+css("/assets/handsontable/dist/handsontable.css")
+  +css("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.css")
   +css("/css/app/index.css")
 block body
+  +nbr(2)
   .text-center
     h1 Schulze Voting Method
     p change the scores in the grid to see how ranks are changed for each candidates
   .w-1024.rwd.mx-auto
     #grid.text-center
       .input.mb-4
-        input(placeholder="columns")
-        span &nbsp;&times;&nbsp;
-        input(placeholder="rows")
-      .inner.d-inline-block
-    #detail-grid.mt-4.text-center
+        .btn.btn-outline-dark.mr-2(data-action="clear") Reset
+        .btn.btn-outline-dark(data-action="sample") Sample Data
+      .inner.d-inline-block.text-sm.w-100
+  .w-100.p-4.rwd.mx-auto
+    #detail-grid.mt-4.text-center.mx-auto
       h3 Detail Versus Result
-      .inner.d-inline-block
+      p Cell[#[code row]][#[code col]] = the number of winning vote for #[code row] against #[code col].
+      .inner.d-inline-block.text-sm.w-100.overflow-hidden(style="height:700px")
 
 block script
   +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
   +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
   +script("https://cdn.jsdelivr.net/npm/numbro@2/dist/numbro.min.js")
-  +script("/assets/handsontable/dist/handsontable.js")
+  //-+script("/assets/handsontable/dist/handsontable.js")
+  +script("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.js")
   +script("/assets/schulze.js/schulze.min.js")
   +script("/js/app/index.js")
