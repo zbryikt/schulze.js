@@ -4,8 +4,5 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-}
-#root {
-  max-width: 1024px;
-  margin: 40px auto 120px;
+  font-size: 18px;
 }
