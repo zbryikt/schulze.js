@@ -8,7 +8,7 @@ block body
   +nbr(2)
   .text-center
     h1 Schulze Voting Method
-    p change the scores in the grid to see how ranks are changed for each candidates
+    p.text-muted change values in grid to see how ranks are changed. Or, copy & paste directly from google spreadsheet.
   .w-1024.rwd.mx-auto
     #grid.text-center
       .input.mb-4
@@ -18,7 +18,7 @@ block body
   .w-100.p-4.rwd.mx-auto
     #detail-grid.mt-4.text-center.mx-auto
       h3 Detail Versus Result
-      p Cell[#[code row]][#[code col]] = the number of winning vote for #[code row] against #[code col].
+      p.text-muted Cell[#[code row]][#[code col]] = the number of winning vote for #[code row] against #[code col].
       .inner.d-inline-block.text-sm.w-100.overflow-hidden(style="height:700px")
 
 block script
