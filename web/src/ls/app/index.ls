@@ -13,11 +13,12 @@ local = {}
 versusRenderer = (instance,td,row,col,prop,value,cellProperties) ->
   judges = local.judges or []
   Handsontable.renderers.TextRenderer.apply @, arguments
-  if row + 1 == col => return {}
+  versus = instance.getDataAtCell col - 2, row + 2
+  if row + 2 == col or col < 2=> return {}
   td.classList.remove \win, \lose, \tie
-  if value > judges.length / 2 => td.classList.add \win
-  else if value < judges.length / 2 => td.classList.add \lose
-  else => td.classList.add \tie
+  if value > versus => td.classList.add \win
+  else if value < versus => td.classList.add \lose
+  else td.classList.add \tie
 Handsontable.renderers.registerRenderer('versusRenderer', versusRenderer)
 
 hot = new Handsontable(document.querySelector('#grid .inner'), {
@@ -43,7 +44,7 @@ detailtable = new Handsontable(document.querySelector('#detail-grid .inner'), {
   rowHeights: 30
   colWidths: 30
   cells: (r, c) -> return { renderer: \versusRenderer, readOnly: true }
-  modifyColWidth: (w, col) -> if col == 0 => return 300
+  modifyColWidth: (w, col) -> if col == 1 => return 300
   stretchH: \all
 })
 
@@ -54,18 +55,23 @@ clear = ->
   data.push ['']
   hot.updateSettings data: data, cells: (r, c) -> return {readOnly: false}
   detailtable.updateSettings data: [['']]
+  local := {}
 
 update = ->
   count <<< {row: hot.countRows!, col: hot.countCols!}
   votes = JSON.parse(JSON.stringify(data))
+  if local.ranked =>
+    count.col--
+    votes.map -> it.splice it.length - 1
   local.judges = judges = votes.0.slice 1
   {rank, detail} = schulze.from-array votes, {}
 
+  local.ranked = true
   hot.setDataAtCell 0, count.col, 'Rank'
   hot.updateSettings cells: (r, c) -> if c == count.col => return {readOnly: true} else return {}
-  for i from 0 til rank.length =>
+  hot.setDataAtCell [0 til rank.length].map (i) ->
     cand = rank[i]
-    hot.setDataAtCell (cand.idx + 1), (count.col), cand.rank
+    [(cand.idx + 1), (count.col), cand.rank]
 
   detailtable.loadData detail
   width = (count.row - 1) * 30 + 120 >? 800
