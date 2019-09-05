@@ -7,19 +7,23 @@ block head
 block body
   +nbr(2)
   .text-center
-    h1 Schulze Voting Method
-    p.text-muted change values in grid to see how ranks are changed. Or, copy & paste directly from google spreadsheet.
+    h1 Schulze Method
+    p.text-muted electoral system for selecting winners using votes that express preferences. Powered by #[a(href="/") Schulze.js].
+    hr
+    p.text-muted change values in grid to see how rank changes. You can also copy & paste directly from Google spreadsheet.
   .w-1024.rwd.mx-auto
     #grid.text-center
       .input.mb-4
         .btn.btn-outline-dark.mr-2(data-action="clear") Reset
-        .btn.btn-outline-dark(data-action="sample") Sample Data
+        .btn.btn-outline-dark(data-action="sample") Load Sample
       .inner.d-inline-block.text-sm.w-100
   .w-100.p-4.rwd.mx-auto
     #detail-grid.mt-4.text-center.mx-auto
       h3 Detail Versus Result
       p.text-muted Cell[#[code row]][#[code col]] = the number of winning vote for #[code row] against #[code col].
       .inner.d-inline-block.text-sm.w-100.overflow-hidden(style="height:700px")
+  .p-4.text-center
+    a(href="/") Documentation
 
 block script
   +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
