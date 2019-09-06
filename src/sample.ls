@@ -1,5 +1,4 @@
-require! <[ fs]>
-schulze = require "./src/index"
+require! <[fs schulze]>
 
 # Load JSON example
 #schulze.from-json JSON.parse(fs.read-file-sync('somedata.json').toString!)
