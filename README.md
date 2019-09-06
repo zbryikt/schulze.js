@@ -2,6 +2,9 @@
 
 Schulze method JavaScript implementation.
 
+ * [online documentation](http://schulzejs.bindo.la/)
+ * [online demo](http://schulzejs.bindo.la/app/)
+
 
 # Usage
 
