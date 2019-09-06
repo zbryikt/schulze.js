@@ -51,33 +51,44 @@ Sample Input Format
 -----------------
 
  * Row Based CSV:
-   ```
-   Item, JudgeA,JudgeB,JudgeC
-   Cand1,     1,     2,     3
-   Cand2,     2      1,     4
-   Cand3,     3,     1,     1
-   ```
+    ```
+    Item, JudgeA,JudgeB,JudgeC
+    Cand1,     1,     2,     3
+    Cand2,     2      1,     4
+    Cand3,     3,     1,     1
+    ```
 
  * Column Based CSV:
-   ```
-   Judge, Cand1,Cand2,Cand3
-   JudgeA,    1,    2,    3
-   JudgeB,    2,    1,    1
-   JudgeC,    3,    4,    1
-   ```
+    ```
+    Judge, Cand1,Cand2,Cand3
+    JudgeA,    1,    2,    3
+    JudgeB,    2,    1,    1
+    JudgeC,    3,    4,    1
+    ```
+
+ * 2DArray:
+    ```
+    [
+      ["Candidates", "JudgeA", "JudgeB", "JudgeC"],
+      ["Cand1", 1, 2, 3],
+      ["Cand2", 2, 1, 1],
+      ["Cand3", 3, 4, 1]
+    ]
+    ```
+
 
  * JSON:
-   ```
-   {
-     rank: {
-       "JudgeA": [1,2,3],
-       "JudgeB": [2,1,1],
-       "JudgeC": [3,4,1],
-     }, candidateNames: [
-       "Cand1", "Cand2", "Cand3"
-     ]
-   }
-   ```
+    ```
+    {
+      rank: {
+        "JudgeA": [1,2,3],
+        "JudgeB": [2,1,1],
+        "JudgeC": [3,4,1],
+      }, candidateNames: [
+        "Cand1", "Cand2", "Cand3"
+      ]
+    }
+    ```
 
 
 ## Todo List
