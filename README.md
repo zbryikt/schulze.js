@@ -12,19 +12,19 @@ Schulze method JavaScript implementation.
    npm install https://github.com/zbryikt/schulze.js
 
  * in borwser: download schulze.min.js and include it in your HTML with following:
-   `
-   <script src="<path-to-your>/schulze.min.js"></script>
-   `
+    ```
+    <script src="<path-to-your>/schulze.min.js"></script>
+    ```
 
  * example:
-   `
-   var fs = require("fs");
-   var schulze = require("schulze.js")
-   var inputOptions = {}, outputOptions = {};
-   /* json = {rank, detail} */
-   var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
-   var csv = schulze.toCsv(json.rank, outputOptions);
-   `
+    ```
+    var fs = require("fs");
+    var schulze = require("schulze.js")
+    var inputOptions = {}, outputOptions = {};
+    /* json = {rank, detail} */
+    var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
+    var csv = schulze.toCsv(json.rank, outputOptions);
+    ```
 
 Available API:
 
