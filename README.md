@@ -1,23 +1,35 @@
-schulze.js
-================
+# schulze.js
 
 Schulze method JavaScript implementation.
 
 
-Usage
-----------------
+# Usage
 
  * install:
    npm install https://github.com/zbryikt/schulze.js
 
- * API:
-   ```
+ * in borwser: download schulze.min.js and include it in your HTML with following:
+   `
+   <script src="<path-to-your>/schulze.min.js"></script>
+   `
+
+ * example:
+   `
    var fs = require("fs");
    var schulze = require("schulze.js")
    var inputOptions = {}, outputOptions = {};
+   /* json = {rank, detail} */
    var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
-   var csv = schulze.toCsv(json, outputOptions);
-   ```
+   var csv = schulze.toCsv(json.rank, outputOptions);
+   `
+
+Available API:
+
+ * fromCsv(CSVString, option)
+ * fromArray(2DArray, option)
+ * fromJSON(json, option)
+ * toCsv(rank, option)
+
 
 Options
 ----------------
@@ -65,14 +77,17 @@ Sample Input Format
    ```
 
 
-Todo List
-----------------
+## Todo List
 
  * publish in NPM.
 
 
-License
-----------------
+## Reference
+
+ * [Are Condorcet and minimax voting systems the best?](https://arxiv.org/abs/1807.01366)
+
+
+## License
 
 MIT License, Kirby T. Wu, 2018.
 
