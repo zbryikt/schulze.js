@@ -23,6 +23,6 @@
     "template": "github:zbryikt/template#v2"
   },
   "dependencies": {
-    "papaparse": "=5.0.0"
+    "papaparse": "=5.2.0"
   }
 }
