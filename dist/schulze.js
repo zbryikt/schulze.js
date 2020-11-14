@@ -310,11 +310,6 @@
   compute = function(arg$){
     var data, candidates, judges, size, d, res$, i$, i, lresult$, j$, j, p, lresult1$, len$, judge, rank, k$, k, a, b, hash, count, sum, list, v, ref$, detail;
     data = arg$.data, candidates = arg$.candidates, judges = arg$.judges;
-    return minimax({
-      data: data,
-      candidates: candidates,
-      judges: judges
-    });
     size = candidates.length;
     res$ = [];
     for (i$ = 0; i$ < size; ++i$) {
@@ -464,9 +459,8 @@
       fromArray: fromArray,
       toCsv: toCsv
     };
-  }
-  if (typeof window != 'undefined' && window !== null) {
-    return window.schulze = {
+  } else if (typeof window != 'undefined' && window !== null) {
+    window.schulze = {
       compute: compute,
       fromCsv: fromCsv,
       fromJson: fromJson,
@@ -474,14 +468,14 @@
       toCsv: toCsv
     };
   }
-})();
-function import$(obj, src){
-  var own = {}.hasOwnProperty;
-  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
-  return obj;
-}
-function in$(x, xs){
-  var i = -1, l = xs.length >>> 0;
-  while (++i < l) if (x === xs[i]) return true;
-  return false;
-}
+  function import$(obj, src){
+    var own = {}.hasOwnProperty;
+    for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+    return obj;
+  }
+  function in$(x, xs){
+    var i = -1, l = xs.length >>> 0;
+    while (++i < l) if (x === xs[i]) return true;
+    return false;
+  }
+}).call(this);
