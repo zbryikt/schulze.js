@@ -96,11 +96,15 @@ JSON:
 
 ## Reference
 
- * [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method)
+ * [Condorcet Method](https://en.wikipedia.org/wiki/Condorcet_method)
+ * [Condorcet Criterion](https://en.wikipedia.org/wiki/Condorcet_criterion)
+ * [Condorcet Internet Voting Service](https://civs.cs.cornell.edu/)
  * [Are Condorcet and minimax voting systems the best?](https://arxiv.org/abs/1807.01366)
  * [Participation Criterion](https://en.wikipedia.org/wiki/Participation_criterion)
  * [Exploring the No-Show Paradox for Condorcet Extensions Using Ehrhart Theory and Computer Simulations](http://www.ifaamas.org/Proceedings/aamas2019/pdfs/p520.pdf)
  * [schulze-method by Patrick Herrmann](https://bitbucket.org/patrickherrmann/schulze-method)
+ * [Score Voting](https://en.wikipedia.org/wiki/Score_voting)
+ * [Why Range Voting is better than Condorcet methods](https://www.rangevoting.org/rangeVcond.html)
 
 
 ## License
