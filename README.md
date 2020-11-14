@@ -98,11 +98,15 @@ Sample Input Format
 
 ## Reference
 
+ * [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method)
  * [Are Condorcet and minimax voting systems the best?](https://arxiv.org/abs/1807.01366)
+ * [Participation Criterion](https://en.wikipedia.org/wiki/Participation_criterion)
+ * [Exploring the No-Show Paradox for Condorcet Extensions Using Ehrhart Theory and Computer Simulations](http://www.ifaamas.org/Proceedings/aamas2019/pdfs/p520.pdf)
+ * [schulze-method by Patrick Herrmann](https://bitbucket.org/patrickherrmann/schulze-method)
 
 
 ## License
 
-MIT License, Kirby T. Wu, 2018.
+MIT
 
 
