@@ -2,40 +2,40 @@
 
 Schulze method JavaScript implementation.
 
+  
  * [online documentation](http://schulzejs.bindo.la/)
  * [online demo](http://schulzejs.bindo.la/app/)
 
 
-# Usage
+## Installation
 
- * install:
-   npm install https://github.com/zbryikt/schulze.js
+install locally:
 
- * in borwser: download schulze.min.js and include it in your HTML with following:
-    ```
+   npm install schulze.js
+
+in borwser: download schulze.min.js and include it in your HTML with following:
+
     <script src="<path-to-your>/schulze.min.js"></script>
-    ```
 
- * example:
-    ```
+
+## Sample Usage
+
     var fs = require("fs");
     var schulze = require("schulze.js")
     var inputOptions = {}, outputOptions = {};
     /* json = {rank, detail} */
     var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
     var csv = schulze.toCsv(json.rank, outputOptions);
-    ```
 
-Available API:
+## API
 
  * fromCsv(CSVString, option)
- * fromArray(2DArray, option)
+ * fromArray:(2DArray, option)
  * fromJSON(json, option)
  * toCsv(rank, option)
 
 
-Options
-----------------
+## Options
 
 Input Options:
 
@@ -47,38 +47,35 @@ Output Options:
  * sort: sort result based on ranking. default false.
 
 
-Sample Input Format
------------------
+## Sample Input Format
 
- * Row Based CSV:
-    ```
+Row Based CSV:
+
     Item, JudgeA,JudgeB,JudgeC
     Cand1,     1,     2,     3
     Cand2,     2      1,     4
     Cand3,     3,     1,     1
-    ```
 
- * Column Based CSV:
-    ```
+
+Column Based CSV:
+
     Judge, Cand1,Cand2,Cand3
     JudgeA,    1,    2,    3
     JudgeB,    2,    1,    1
     JudgeC,    3,    4,    1
-    ```
 
- * 2DArray:
-    ```
+
+2DArray:
+
     [
       ["Candidates", "JudgeA", "JudgeB", "JudgeC"],
       ["Cand1", 1, 2, 3],
       ["Cand2", 2, 1, 1],
       ["Cand3", 3, 4, 1]
     ]
-    ```
 
 
- * JSON:
-    ```
+JSON:
     {
       rank: {
         "JudgeA": [1,2,3],
@@ -88,12 +85,12 @@ Sample Input Format
         "Cand1", "Cand2", "Cand3"
       ]
     }
-    ```
 
 
 ## Todo List
 
- * publish in NPM.
+ * publish in NPM
+ * writing test
 
 
 ## Reference
