@@ -1,9 +1,9 @@
 {
-  "author": "Kirby Wu",
+  "author": "zbryikt",
   "name": "schulze.js",
   "license": "MIT",
   "description": "Schulze method JavaScript implementation.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/schulze.ls",
   "homepage": "https://github.com/zbryikt/schulze.js",
   "repository": {
@@ -16,21 +16,36 @@
   },
   "scripts": {
     "start": "npx server -r web",
-    "deploy": "npx deploy web/static"
+    "deploy": "npx deploy web/static",
+    "test": "npx mocha --require livescript ./test/index.ls",
+    "coverage": "npx nyc --reporter=text npm run test"
+  },
+  "nyc": {
+    "all": true,
+    "extension": ".ls",
+    "require": [
+      "livescript"
+    ],
+    "include": [
+      "src/**/*"
+    ]
   },
   "devDependencies": {
+    "@loadingio/ldquery": "^1.1.1",
     "LiveScript": ">=1.2.0",
     "bootstrap": "^4.5.3",
-    "deploy": "github:zbryikt/deploy",
-    "fedep": "0.0.6",
-    "template": "github:zbryikt/template#v2.1.3",
-    "uglify-js": "=3.2.0",
-    "@loadingio/ldquery": "^1.1.1",
     "bootstrap.ldui": "github:loadingio/bootstrap.ldui",
     "bootstrap.native": "^3.0.14",
+    "deploy": "github:zbryikt/deploy",
+    "fedep": "0.0.6",
     "ldcover": "^1.0.0",
     "ldiconfont": "github:loadingio/ldiconfont",
-    "ldview": "0.0.2"
+    "ldview": "0.0.2",
+    "mocha": "^8.2.1",
+    "mochawesome": "^6.2.1",
+    "nyc": "^15.1.0",
+    "template": "github:zbryikt/template#v2.1.3",
+    "uglify-js": "=3.2.0"
   },
   "dependencies": {
     "papaparse": "^5.3.0"

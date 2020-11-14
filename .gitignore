@@ -5,3 +5,4 @@ web/.view
 .swp
 *.log
 secret.*
+.nyc_output
