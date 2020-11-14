@@ -32,7 +32,7 @@ in borwser: download schulze.min.js and include it in your HTML with following:
 
  * fromCsv(CSVString, option)
  * fromArray(2DArray, option)
- * fromJSON(json, option)
+ * fromJson(json, option)
  * toCsv(rank, option)
 
 

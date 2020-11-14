@@ -144,6 +144,7 @@
         return it;
       }).length;
     });
+    console.log(data);
     rank = {};
     ref$ = [
       data.map(function(it){

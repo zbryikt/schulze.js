@@ -52,9 +52,10 @@ from-array = (data, options = {}) ->
   return compute {data: rank, candidates: candidate-names, judges: judge-names}
 
 from-json = (json, options = {}) ->
+  if typeof(json) == \string => json = JSON.parse(json)
   options = {} <<< input-default-options <<< options
   rank = json.rank
-  candidate-names = json.candidateNames
+  candidate-names = json["candidateNames"]
   judge-names = [k for k of json.rank]
   data-validate rank, options
   return compute {data: rank, candidates: candidate-names, judges: judge-names}
