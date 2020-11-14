@@ -106,6 +106,8 @@ JSON:
  * [schulze-method by Patrick Herrmann](https://bitbucket.org/patrickherrmann/schulze-method)
  * [Score Voting](https://en.wikipedia.org/wiki/Score_voting)
  * [Why Range Voting is better than Condorcet methods](https://www.rangevoting.org/rangeVcond.html)
+ * [Schulze Method](https://en.wikipedia.org/wiki/Schulze_method)
+   - source of `wiki-example` dataset.
 
 
 ## License
