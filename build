@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 mkdir -p dist
 echo "build src/schulze.ls -> dist/schulze.js ..."
-./node_modules/.bin/lsc -cp src/schulze.ls > dist/schulze.js
+./node_modules/.bin/lsc --no-header -cp src/schulze.ls > dist/schulze.js
 echo "minifying schulze.js ..."
 ./node_modules/.bin/uglifyjs dist/schulze.js > dist/schulze.min.js
 echo "update web assets ..."
