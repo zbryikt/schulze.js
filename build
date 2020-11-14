@@ -5,6 +5,6 @@ echo "build src/schulze.ls -> dist/schulze.js ..."
 echo "minifying schulze.js ..."
 ./node_modules/.bin/uglifyjs dist/schulze.js > dist/schulze.min.js
 echo "update web assets ..."
-mkdir -p web/static/assets/schulze.js/
-cp dist/* web/static/assets/schulze.js/
+mkdir -p web/static/assets/lib/schulze.js/dev
+cp dist/* web/static/assets/lib/schulze.js/dev/
 echo "done."
