@@ -8,8 +8,8 @@
   };
   inputDefaultOptions = {
     isRowBased: true,
-    isRank: false,
-    higherIsBetter: true
+    higherIsBetter: true,
+    showWarning: true
   };
   toCsv = function(computed, options){
     var ret, i$, len$, item;
@@ -108,7 +108,7 @@
       for (i$ = 0, to$ = list.length; i$ < to$; ++i$) {
         i = i$;
         value = list[i];
-        if (isNaN(value)) {
+        if (isNaN(value) && options.showWarning) {
           console.log("warning: '" + value + "' is type NaN (" + (i + 1) + "th element for " + judge + ")");
         }
         list[i] = +value;
@@ -307,7 +307,7 @@
     }
   };
   compute = function(arg$){
-    var data, candidates, judges, size, d, res$, i$, i, lresult$, j$, j, p, lresult1$, len$, judge, rank, k$, k, a, b, hash, count, sum, list, v, ref$, detail;
+    var data, candidates, judges, size, d, res$, i$, i, lresult$, j$, j, p, lresult1$, len$, judge, rank, k$, k, a, b, candidatesByRank, hash, count, sum, list, v, ref$, byRank, candidatesByIndex, byIndex;
     data = arg$.data, candidates = arg$.candidates, judges = arg$.judges;
     size = candidates.length;
     res$ = [];
@@ -385,7 +385,7 @@
         p[j][i] -= a;
       }
     }
-    rank = [];
+    candidatesByRank = [];
     hash = {};
     for (i$ = 0; i$ < size; ++i$) {
       i = i$;
@@ -404,12 +404,12 @@
           rank: 0
         };
       }
-      rank.push({
+      candidatesByRank.push({
         idx: i,
         count: count
       });
     }
-    rank.sort(function(a, b){
+    candidatesByRank.sort(function(a, b){
       return b.count - a.count;
     });
     sum = 1;
@@ -427,25 +427,39 @@
       v.rank = sum;
       sum += v.count;
     }
-    rank.map(function(d, i){
+    candidatesByRank.map(function(d, i){
       d.rank = hash[d.count].rank;
       return d.name = candidates[d.idx];
     });
-    detail = [];
+    byRank = [];
     for (i$ = 0; i$ < size; ++i$) {
       i = i$;
-      list = [rank[i].rank, rank[i].name].concat((fn$()));
-      detail.push(list);
+      list = [candidatesByRank[i]].concat((fn$()));
+      byRank.push(list);
     }
+    candidatesByIndex = candidatesByRank.map(function(it){
+      return it;
+    });
+    candidatesByIndex.sort(function(a, b){
+      return a.idx - b.idx;
+    });
+    byIndex = candidatesByIndex.map(function(ri){
+      return [ri].concat(candidatesByIndex.map(function(rj){
+        return byRank[ri.rank - 1][rj.rank];
+      }));
+    });
     return {
-      rank: rank,
-      detail: detail
+      candidates: candidatesByRank,
+      pairPreferenceMatrix: {
+        byRank: byRank,
+        byIndex: byIndex
+      }
     };
     function fn$(){
       var i$, to$, results$ = [];
       for (i$ = 0, to$ = size; i$ < to$; ++i$) {
         j = i$;
-        results$.push(d[rank[i].idx][rank[j].idx]);
+        results$.push(d[candidatesByRank[i].idx][candidatesByRank[j].idx]);
       }
       return results$;
     }

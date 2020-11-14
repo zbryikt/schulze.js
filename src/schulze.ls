@@ -28,8 +28,8 @@ output-default-options = do
 
 input-default-options = do
   is-row-based: true
-  is-rank: false
   higher-is-better: true
+  show-warning: true
 
 to-csv = (computed, options = {}) ->
   ret = []
@@ -63,12 +63,13 @@ data-validate = (rank, options) ->
   for judge,list of rank =>
     for i from 0 til list.length =>
       value = list[i]
-      if isNaN(value) => console.log "warning: '#value' is type NaN (#{i+1}th element for #judge)"
+      if isNaN(value) and options.show-warning =>
+        console.log "warning: '#value' is type NaN (#{i+1}th element for #judge)"
       list[i] = +value
     rank[judge] = list.map (v) ->
       if isNaN(v) => return v
       ret = list.filter ->
-        if options.higher-is-better =>return (it > v) else return (it < v)
+        if options.higher-is-better => return (it > v) else return (it < v)
       return ret.length + 1
 
 from-csv = (csv, options = {}) ->
@@ -148,33 +149,41 @@ compute = ({data, candidates, judges}) ->
       p[i][j] -= b
       p[j][i] -= a
 
-  rank = []
+  # candidates ordered by rank, with additional information ( original index, ranking order, etc. )
+  candidates-by-rank = []
   hash = {}
   for i from 0 til size =>
     count = 0
-    for j from 0 til size =>
-      if p[i][j] > 0 => count++
+    # how many candidates did i win? ( win count )
+    for j from 0 til size => if p[i][j] > 0 => count++
+    # aggregate the number of with same win count
     if hash[count]? => hash[count].count++ else hash[count] = {count: 1, rank: 0}
-    rank.push {idx: i, count: count}
-
-  rank.sort (a,b) -> b.count - a.count
+    candidates-by-rank.push {idx: i, count: count}
+  candidates-by-rank.sort (a,b) -> b.count - a.count
   sum = 1
+  # order by win count, and calculate the actual rank ( for those with the same win count )
   list = [[k,v] for k,v of hash]
   list.sort (a,b) -> b.0 - a.0
-
   for [k,v] in list =>
     v.rank = sum
     sum += v.count
-  rank.map (d,i) ->
+  candidates-by-rank.map (d,i) ->
     d.rank = hash[d.count].rank
     d.name = candidates[d.idx]
 
-  detail = []
+  # pair-preference-matrix - entries ordered by candidate final ranking
+  by-rank = []
   for i from 0 til size =>
-    list = [rank[i].rank, rank[i].name] ++ [d[rank[i].idx][rank[j].idx] for j from 0 til size]
-    detail.push list
+    list = [candidates-by-rank[i]] ++ [d[candidates-by-rank[i].idx][candidates-by-rank[j].idx] for j from 0 til size]
+    by-rank.push list
 
-  return {rank, detail}
+  # pair-preference-matrix - entries ordered by candidate index.
+  # ranked-candidaed, order by original index
+  candidates-by-index = candidates-by-rank.map -> it
+  candidates-by-index.sort (a,b) -> a.idx - b.idx
+  by-index = candidates-by-index.map (ri) -> [ri] ++ candidates-by-index.map (rj) -> by-rank[ri.rank - 1][rj.rank]
+
+  return {candidates: candidates-by-rank, pair-preference-matrix: {by-rank, by-index}}
 
 if module? => module.exports = {compute, from-csv, from-json, from-array, to-csv}
 else if window? => window.schulze = {compute, from-csv, from-json, from-array, to-csv}

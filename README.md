@@ -23,14 +23,15 @@ in borwser: download schulze.min.js and include it in your HTML with following:
     var fs = require("fs");
     var schulze = require("schulze.js")
     var inputOptions = {}, outputOptions = {};
-    /* json = {rank, detail} */
+    /* json = {candidates, pairPreferenceMatrix: {byIndex, byRank}} */
     var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
     var csv = schulze.toCsv(json.rank, outputOptions);
+
 
 ## API
 
  * fromCsv(CSVString, option)
- * fromArray:(2DArray, option)
+ * fromArray(2DArray, option)
  * fromJSON(json, option)
  * toCsv(rank, option)
 
@@ -40,8 +41,8 @@ in borwser: download schulze.min.js and include it in your HTML with following:
 Input Options:
 
  * isRowBased: see next section. default true
- * isRank: is input data actually ranking order. default false
  * higherIsBetter: is higher input value means better in score. default true 
+ * showWarning: warning for any unparsable input. default true
 
 Output Options:
  * sort: sort result based on ranking. default false.
