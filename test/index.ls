@@ -58,7 +58,14 @@ describe 'output for sample dataset', ->
     answer = JSON.parse(fs.read-file-sync 'dataset/wiki-schulze-method/answer.json' .toString!)
     assert.deep-strict-equal output, answer
 
-  #that "dataset rand-c5-j5", ->
+  that "dataset rand-c5-j5", ->
+    output = schulze.fromCsv(
+      fs.read-file-sync('dataset/rand-c5-j5/dataset.csv').toString!
+      {isRowBased: false, higher-is-better: false, show-warning: false}
+    )
+    output = schulze.to-grid output, {byIndex: false}
+    answer = fs.read-file-sync 'dataset/rand-c5-j5/answer.txt' .toString!
+    assert.deep-strict-equal output, answer
 
   that "dataset rand-c32-j10", ->
     output = schulze.fromCsv(
