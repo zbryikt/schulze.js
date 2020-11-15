@@ -1,5 +1,7 @@
 require! <[fs path yargs]>
 
+# example using yargs in livescript: with --
+#     lsc dataset-generator.ls -- -o some-file
 argv = yargs
   .option \output, do
     alias: \o
