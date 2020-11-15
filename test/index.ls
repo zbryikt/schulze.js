@@ -9,17 +9,17 @@ describe 'output format', ->
       {higher-is-better: false, show-warning: false}
     )
     ret = schulze.toCsv output.candidates
-    assert.equal ret, fs.read-file-sync('dataset/simple/answer.csv').toString!
+    assert.equal ret, fs.read-file-sync('dataset/simple/answer.csv').toString!, new Error("output mismatch")
   that "toGrid ( with rand-c7-j100 dataset )", ->
     output = schulze.fromCsv(
       fs.read-file-sync('dataset/rand-c7-j100/dataset.csv').toString!
       {isRowBased: false, higher-is-better: false, show-warning: false}
     )
-    ret = schulze.to-grid output, {byIndex: false}
+    ret = schulze.to-grid output, {byIndex: false} .trim!
     assert.equal(
       ret,
-      fs.read-file-sync('dataset/rand-c7-j100/grid.txt').toString!,
-      new Error("output doesn't match `dataset/rand-c7-j100/grid.txt`")
+      fs.read-file-sync('dataset/rand-c7-j100/grid.txt').toString!trim!,
+      new Error("output mismatch")
     )
 
 describe 'different input sourec', ->
@@ -29,7 +29,7 @@ describe 'different input sourec', ->
       {higher-is-better: false, show-warning: false}
     )
     answer = JSON.parse(fs.read-file-sync 'dataset/simple/answer.json' .toString!)
-    assert.deep-strict-equal output, answer
+    assert.deep-strict-equal output, answer, new Error("output mismatch")
 
   that "fromCsv ( with rand-c7-j100 dataset )", ->
     output = schulze.fromCsv(
@@ -37,17 +37,19 @@ describe 'different input sourec', ->
       {isRowBased: false, higher-is-better: false, show-warning: false}
     )
     answer = JSON.parse(fs.read-file-sync 'dataset/rand-c7-j100/answer.json' .toString!)
-    assert.deep-strict-equal output, answer
+    assert.deep-strict-equal output, answer, new Error("output mismatch")
 
 describe 'output for sample dataset', ->
   that "dataset rand-c7-j100", ->
-    input = fs.read-file-sync 'dataset/rand-c7-j100/dataset.csv'
-      .toString!
-      .split \\n
-      .map (d,i) -> d.split(\,)
-    output = schulze.fromArray input, {isRowBased: false, higher-is-better: false, show-warning: false}
+    output = schulze.fromCsv(
+      (fs.read-file-sync 'dataset/rand-c7-j100/dataset.csv' .toString!),
+      {isRowBased: false, higher-is-better: false, show-warning: false}
+    )
     answer = JSON.parse(fs.read-file-sync 'dataset/rand-c7-j100/answer.json' .toString!)
-    assert.deep-strict-equal output, answer
+    assert.deep-strict-equal output, answer, new Error("output mismatch (json)")
+    grid = schulze.to-grid output, {byIndex: false} .trim!
+    answer = fs.read-file-sync 'dataset/rand-c7-j100/grid.txt' .toString!trim!
+    assert.deep-strict-equal grid, answer, new Error("output mismatch (grid)")
 
   that "dataset wiki-schulze-method", ->
     json = fs.read-file-sync "dataset/wiki-schulze-method/dataset.csv"
@@ -56,7 +58,7 @@ describe 'output for sample dataset', ->
       .map -> it.split \,
     output = schulze.fromArray json, {isRowBased: false, higher-is-better: false, show-warning: false}
     answer = JSON.parse(fs.read-file-sync 'dataset/wiki-schulze-method/answer.json' .toString!)
-    assert.deep-strict-equal output, answer
+    assert.deep-strict-equal output, answer, new Error("output mismatch")
 
   that "dataset rand-c5-j5", ->
     output = schulze.fromCsv(
@@ -65,18 +67,13 @@ describe 'output for sample dataset', ->
     )
     output = schulze.to-grid output, {byIndex: false}
     answer = fs.read-file-sync 'dataset/rand-c5-j5/answer.txt' .toString!
-    assert.deep-strict-equal output, answer
+    assert.deep-strict-equal output, answer, new Error("output mismatch")
 
   that "dataset rand-c32-j10", ->
     output = schulze.fromCsv(
       fs.read-file-sync('dataset/rand-c32-j10/dataset.csv').toString!
       {isRowBased: false, higher-is-better: false, show-warning: false}
     )
-    answer = fs.read-file-sync 'dataset/rand-c32-j10/answer.txt' .toString!
-    output = output.pairPreferenceMatrix.byRank
-        .map (p,j) ->
-          p
-            .map (d,i) -> if i == j + 1 => '-' else if i > 0 => d else (d.name + " " * (4 - d.name.length))
-            .join(' ')
-        .join(\\n)
-    assert.deep-strict-equal output, answer, new Error("output doesn't match `dataset/rand-c32-j10/answer.txt`")
+    grid = schulze.to-grid output, {byIndex: false} .trim!
+    answer = fs.read-file-sync 'dataset/rand-c32-j10/answer.txt' .toString!trim!
+    assert.deep-strict-equal grid, answer, new Error("output mismatch")

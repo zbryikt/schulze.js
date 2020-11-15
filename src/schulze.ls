@@ -143,38 +143,55 @@ minimax = ({data, candidates, judges}) ->
 compute = ({data, candidates, judges}) ->
   size = candidates.length
 
+  # calculate pairwise preference matrix
   d = for i from 0 til size => for j from 0 til size => 0
-  p = for i from 0 til size => for j from 0 til size => 0
   for judge in judges =>
     rank = data[judge]
-    for i from 0 til size => for j from 0 til size => if rank[i] < rank[j] => d[i][j]++
+    for i from 0 til size => for j from 0 til size =>
+      # A. count only when both i or j is defined.
+      #    treat all undefined rank in-comparable. CIVS use this option.
+      if isNaN(rank[i]) or isNaN(rank[j]) => continue
 
+      # B. count only when rank j is not defined
+      #    in this case, all rank-defined candidates are prefered then all rank-undefined candidates.
+      #    and no difference between all rank-undefined candidates.
+      #    this is one of the possible implementation in Schulze's paper
+      #if !isNaN(rank[i]) and !isNaN(rank[j]) =>
+      #  d[i][j]++
+      #  continue
+
+      if rank[i] < rank[j] => d[i][j]++
+
+  # remove paths that lose.
+  p = for i from 0 til size => for j from 0 til size => 0
   for i from 0 til size
     for j from 0 til size
       if i == j => continue
       if d[i][j] > d[j][i] => p[i][j] = d[i][j] else p[i][j] = 0
 
+  # strongest path by Floyd-Warshall algorithm
+  for k from 0 til size
+    for i from 0 til size
+      if k == i => continue
+      for j from 0 til size
+        if j == i or j == k => continue
+        p[i][j] = Math.max(p[i][j], Math.min(p[i][k], p[k][j]))
+
+  # ranking
   for i from 0 til size
     for j from 0 til size
-      if i == j => continue
-      for k from 0 til size
-        if i == k or j == k => continue
-        p[j][k] = Math.max(p[j][k], Math.min(p[j][i], p[i][k]))
-
-  for i from 0 til size
-    for j from 0 til size =>
       a = p[i][j]
       b = p[j][i]
       p[i][j] -= b
       p[j][i] -= a
-
   # candidates ordered by rank, with additional information ( original index, ranking order, etc. )
   candidates-by-rank = []
   hash = {}
   for i from 0 til size =>
     count = 0
     # how many candidates did i win? ( win count )
-    for j from 0 til size => if p[i][j] > 0 => count++
+    #for j from 0 til size => if i != j and p[i][j] >= 0 => count++
+    for j from 0 til size => if p[i][j] >= 0 => count++
     # aggregate the number of with same win count
     if hash[count]? => hash[count].count++ else hash[count] = {count: 1, rank: 0}
     candidates-by-rank.push {idx: i, count: count}
@@ -186,21 +203,19 @@ compute = ({data, candidates, judges}) ->
   for [k,v] in list =>
     v.rank = sum
     sum += v.count
+
   candidates-by-rank.map (d,i) ->
     d.rank = hash[d.count].rank
     d.name = candidates[d.idx]
-
-  # pair-preference-matrix - entries ordered by candidate final ranking
-  by-rank = []
-  for i from 0 til size =>
-    list = [candidates-by-rank[i]] ++ [d[candidates-by-rank[i].idx][candidates-by-rank[j].idx] for j from 0 til size]
-    by-rank.push list
-
-  # pair-preference-matrix - entries ordered by candidate index.
-  # ranked-candidaed, order by original index
   candidates-by-index = candidates-by-rank.map -> it
   candidates-by-index.sort (a,b) -> a.idx - b.idx
-  by-index = candidates-by-index.map (ri) -> [ri] ++ candidates-by-index.map (rj) -> by-rank[ri.rank - 1][rj.rank]
+
+  # pair-preference-matrix - entries ordered by candidate index.
+  by-index = d.map (d,i) -> [candidates-by-index[i]] ++ d
+
+  # pair-preference-matrix - entries ordered by candidate final ranking
+  by-rank = candidates-by-rank.map (ci,i) ->
+    [ci] ++ candidates-by-rank.map (cj,j) -> d[ci.idx][cj.idx]
 
   return {candidates: candidates-by-rank, pair-preference-matrix: {by-rank, by-index}}
 
