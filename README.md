@@ -89,6 +89,16 @@ JSON:
     }
 
 
+## Test Data Set
+
+You can use tool/dataset-generator.ls to generate some test dataset. usage:
+
+    lsc tool/dataset-generator.ls -- -h
+
+Currently there are several datasets available under `dataset` folder:
+
+
+
 ## Todo List
 
  * publish in NPM
