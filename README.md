@@ -97,6 +97,11 @@ You can use tool/dataset-generator.ls to generate some test dataset. usage:
 
 Currently there are several datasets available under `dataset` folder:
 
+ - `rand-c32-j10` - generated with `lsc tool/dataset-generator -- -c 32 -j 10 -r true`
+ - `rand-c7-j100` - generated with `lsc tool/dataset-generator -- -c 7 -j 100 -r true`
+ - `simple` - handcrafted simple dataset with 3 candidates, 3 judges.
+ - `wiki-schulze-method` - scenario in Example section of [Wikipedia: Schulze Method](https://en.wikipedia.org/wiki/Schulze_method)
+ - .. and some other datasets under `dataset/dev` folder working in progress.
 
 
 ## Todo List
@@ -117,7 +122,6 @@ Currently there are several datasets available under `dataset` folder:
  * [Score Voting](https://en.wikipedia.org/wiki/Score_voting)
  * [Why Range Voting is better than Condorcet methods](https://www.rangevoting.org/rangeVcond.html)
  * [Schulze Method](https://en.wikipedia.org/wiki/Schulze_method)
-   - source of `wiki-example` dataset.
 
 
 ## License
