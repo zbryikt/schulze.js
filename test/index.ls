@@ -23,20 +23,20 @@ describe 'different input sourec', ->
 
   that "fromCsv", ->
     output = schulze.fromCsv(
-      fs.read-file-sync('test/sample/random-7-100.csv').toString!
+      fs.read-file-sync('test/sample/random-c7-j100.csv').toString!
       {isRowBased: false, higher-is-better: false, show-warning: false}
     )
-    answer = JSON.parse(fs.read-file-sync 'test/sample/random-7-100.result.json' .toString!)
+    answer = JSON.parse(fs.read-file-sync 'test/sample/random-c7-j100.result.json' .toString!)
     assert.deep-strict-equal output, answer
 
 describe 'output for sample dataset', ->
-  that "dataset random-7-100", ->
-    input = fs.read-file-sync 'test/sample/random-7-100.csv'
+  that "dataset random-c7-j100", ->
+    input = fs.read-file-sync 'test/sample/random-c7-j100.csv'
       .toString!
       .split \\n
       .map (d,i) -> d.split(\,)
     output = schulze.fromArray input, {isRowBased: false, higher-is-better: false, show-warning: false}
-    answer = JSON.parse(fs.read-file-sync 'test/sample/random-7-100.result.json' .toString!)
+    answer = JSON.parse(fs.read-file-sync 'test/sample/random-c7-j100.result.json' .toString!)
     assert.deep-strict-equal output, answer
 
   that "dataset wiki-example", ->
@@ -46,4 +46,18 @@ describe 'output for sample dataset', ->
       .map -> it.split \,
     output = schulze.fromArray json, {isRowBased: false, higher-is-better: false, show-warning: false}
     answer = JSON.parse(fs.read-file-sync 'test/sample/wiki-example.result.json' .toString!)
+    assert.deep-strict-equal output, answer
+
+  that "dataset random-c32-j10", ->
+    output = schulze.fromCsv(
+      fs.read-file-sync('test/sample/random-c32-j10.csv').toString!
+      {isRowBased: false, higher-is-better: false, show-warning: false}
+    )
+    answer = fs.read-file-sync 'test/sample/random-c32-j10.result.data' .toString!
+    output = output.pairPreferenceMatrix.byRank
+        .map (p,j) ->
+          p
+            .map (d,i) -> if i == j + 1 => '-' else if i > 0 => d else (d.name + " " * (4 - d.name.length))
+            .join(' ')
+        .join(\\n)
     assert.deep-strict-equal output, answer

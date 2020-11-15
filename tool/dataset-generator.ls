@@ -1,4 +1,4 @@
-require! <[fs path yargs]>
+require! <[fs fs-extra path yargs]>
 
 # example using yargs in livescript: with --
 #     lsc dataset-generator.ls -- -o some-file
@@ -31,21 +31,23 @@ argv = yargs
 outfile = argv.o
 judge-count = if argv.j? => argv.j else 100
 candidate-count = if argv.c? => argv.c else 7
-use-rank = if argv.r? => arg.r else true
+use-rank = if argv.r? => argv.r else true
 invalid-rate = if argv.i? => argv.i else 0.1
 
 ret = []
-console.log (<["judge-name"]> ++ [1 to candidate-count].map (d,i) -> "\"c-#d\"").join(\,)
+ret.push (<["judge-name"]> ++ [1 to candidate-count].map (d,i) -> "\"c-#d\"").join(\,)
 for i from 1 to judge-count =>
   a = [1 to candidate-count].map -> [Math.random!, it]
   a.sort (a,b) -> a.0 - b.0
   ret.push(
-    ["\"j-#{i}\""] ++ a
-      .map -> if Math.random! < invalid-rate => '-' else if use-rank => it.1 else Math.round(Math.random! * 100)
-      .join \,
+    (
+      ["\"j-#{i}\""] ++
+      a
+        .map -> if Math.random! < invalid-rate => '-' else if use-rank => it.1 else Math.round(Math.random! * 100)
+    ).join \,
   )
 ret = ret.join(\\n)
 if outfile => 
-  fs.ensure-dir-sync path.dirname(outfile)
-  fs.write-file-sync outfile, re
+  fs-extra.ensure-dir-sync path.dirname(outfile)
+  fs.write-file-sync outfile, ret
 else console.log ret
