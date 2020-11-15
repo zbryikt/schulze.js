@@ -13,6 +13,7 @@ install locally:
 
    npm install schulze.js
 
+
 in borwser: download schulze.min.js and include it in your HTML with following:
 
     <script src="<path-to-your>/schulze.min.js"></script>
@@ -23,13 +24,29 @@ in borwser: download schulze.min.js and include it in your HTML with following:
     var fs = require("fs");
     var schulze = require("schulze.js")
     var inputOptions = {}, outputOptions = {};
-    /* json = {candidates, pairPreferenceMatrix: {byIndex, byRank}} */
+    // json: Condorcet object. see below.
     var json = schulze.fromCsv(fs.readFileSync("<your-csv-file>").toString(), inputOptions);
     var csv = schulze.toCsv(json.rank, outputOptions);
 
 
+Condorcet Object:
+
+ - candidates - candidate list with additional information:
+   - name: candidate name
+   - idx: candidate input order
+   - rank: final ranking of this candidate.
+   - count: count of win
+ - pairPreferenceMatrix: 2D Matrix for pairwise preference strength against every possible pair between candidates.
+   - byIndex: matrix ordered by candidate index when input.
+   - byRank: matrix ordered by candidate calculated ranking.
+
+
 ## API
 
+ * toGrid(result, option): format pairwise-preference-matrix of schulze result into human-readable grid.
+   - result: Condorcet Object.
+   - option:
+     - `byIndex`: use index-ordered matrix if true, otherise use rank-ordered matrix. default false
  * fromCsv(CSVString, option)
  * fromArray(2DArray, option)
  * fromJson(json, option)

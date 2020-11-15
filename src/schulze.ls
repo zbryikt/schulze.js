@@ -31,6 +31,24 @@ input-default-options = do
   higher-is-better: true
   show-warning: true
 
+to-grid = (computed, options = {}) ->
+  mat = computed.pairPreferenceMatrix[if options.by-index => "byIndex" else "byRank"]
+  maxlen = do
+    name: Math.max.apply Math, mat.map((d,i) -> d.0.name.length)
+    value: Math.max.apply Math, mat.map((d,i) -> Math.max.apply Math, d.slice(1).map ->"#it".length)
+  pad = (v, len, align-left = false) ->
+    spc = (" " * (len - "#v".length))
+    return if align-left => ("#v" + spc) else (spc + "#v")
+  return mat
+      .map (p,j) ->
+        p
+          .map (d,i) ->
+            if i == j + 1 => pad('-', maxlen.value, true)
+            else if i > 0 => pad(d, maxlen.value)
+            else pad(d.name, maxlen.name, true)
+          .join(' ')
+      .join(\\n)
+
 to-csv = (computed, options = {}) ->
   ret = []
   if options.sort => computed.sort (a,b) -> a.rank - b.rank
@@ -186,5 +204,5 @@ compute = ({data, candidates, judges}) ->
 
   return {candidates: candidates-by-rank, pair-preference-matrix: {by-rank, by-index}}
 
-if module? => module.exports = {compute, from-csv, from-json, from-array, to-csv}
-else if window? => window.schulze = {compute, from-csv, from-json, from-array, to-csv}
+if module? => module.exports = {compute, from-csv, from-json, from-array, to-csv, to-grid}
+else if window? => window.schulze = {compute, from-csv, from-json, from-array, to-csv, to-grid}
