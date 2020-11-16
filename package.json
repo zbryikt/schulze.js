@@ -3,7 +3,10 @@
   "name": "schulze.js",
   "license": "MIT",
   "description": "Schulze method JavaScript implementation.",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "files": [
+    "dist/**/*"
+  ],
   "main": "dist/schulze.js",
   "homepage": "https://github.com/zbryikt/schulze.js",
   "repository": {
