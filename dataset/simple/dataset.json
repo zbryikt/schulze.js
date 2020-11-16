@@ -1,10 +1,10 @@
 {
-  "rank": {
+  "scores": {
     "JudgeA": [1,2,3],
     "JudgeB": [2,1,1],
     "JudgeC": [3,4,1]
   },
-  "candidateNames": [
+  "candidates": [
     "Cand1", "Cand2", "Cand3"
   ]
 }

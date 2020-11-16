@@ -34,14 +34,21 @@ candidate-count = if argv.c? => argv.c else 7
 use-rank = if argv.r? => argv.r else true
 invalid-rate = if argv.i? => argv.i else 0.1
 
+pad0 = (v,len) -> "0" * (len - "#v".length) + "#v"
+
+
+maxlen = do
+  judge: "#judge-count".length
+  candidate: "#candidate-count".length
+
 ret = []
-ret.push (<["judge-name"]> ++ [1 to candidate-count].map (d,i) -> "\"c-#d\"").join(\,)
+ret.push (<["judge-name"]> ++ [1 to candidate-count].map (d,i) -> "\"c-#{pad0(d,maxlen.candidate)}\"").join(\,)
 for i from 1 to judge-count =>
   a = [1 to candidate-count].map -> [Math.random!, it]
   a.sort (a,b) -> a.0 - b.0
   ret.push(
     (
-      ["\"j-#{i}\""] ++
+      ["\"j-#{pad0(i,maxlen.judge)}\""] ++
       a
         .map -> if Math.random! < invalid-rate => '-' else if use-rank => it.1 else Math.round(Math.random! * 100)
     ).join \,
