@@ -129,7 +129,7 @@ Currently there are several datasets available under `dataset` folder:
 
 ## Todo List
 
- * Tie Breaking
+ * Tie breaking
  * publish in NPM
 
 
@@ -145,6 +145,7 @@ Currently there are several datasets available under `dataset` folder:
  * [Score Voting](https://en.wikipedia.org/wiki/Score_voting)
  * [Why Range Voting is better than Condorcet methods](https://www.rangevoting.org/rangeVcond.html)
  * [Schulze Method](https://en.wikipedia.org/wiki/Schulze_method)
+ * [The Schulze Method of Voting](https://arxiv.org/abs/1804.02973)
 
 
 ## License
