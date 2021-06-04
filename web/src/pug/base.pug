@@ -2,7 +2,7 @@
 doctype html
 html
   block vars
-  include /../../static/assets/lib/bootstrap.ldui/main/index.pug
+  include @/bootstrap.ldui/dist/index.pug
   head
     block prehead
     link(rel="preconnect",href="https://fonts.gstatic.com")
@@ -19,5 +19,5 @@ html
     +script("assets/lib/bootstrap.ldui/main/bootstrap.ldui.min.js")
     +script("assets/lib/@loadingio/ldquery/main/ldq.min.js")
     +script("assets/lib/ldcover/main/ldcv.min.js")
-    +script("assets/lib/ldview/main/ldview.min.js")
+    +script("assets/lib/ldview/main/index.min.js")
     block script

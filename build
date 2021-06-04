@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+rm -rf dist
 mkdir -p dist
 echo "build src/schulze.ls -> dist/schulze.js ..."
-./node_modules/.bin/lsc --no-header -cp src/schulze.ls > dist/schulze.js
+npx lsc --no-header -cp src/schulze.ls > dist/schulze.js
 echo "minifying schulze.js ..."
-./node_modules/.bin/uglifyjs dist/schulze.js > dist/schulze.min.js
+npx uglifyjs dist/schulze.js > dist/schulze.min.js
 echo "update web assets ..."
+rm -rf web/static/assets/lib/schulze.js/dev
 mkdir -p web/static/assets/lib/schulze.js/dev
 cp dist/* web/static/assets/lib/schulze.js/dev/
 echo "done."
