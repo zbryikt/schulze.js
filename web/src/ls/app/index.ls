@@ -1,3 +1,4 @@
+sch = new schulze!
 data = [
   ["", "John", "Joe", "David", "Mary"],
   ["Project 1", 90, 60, 80, 70],
@@ -64,21 +65,21 @@ update = ->
     count.col--
     votes.map -> it.splice it.length - 1
   local.judges = judges = votes.0.slice 1
-  {rank, detail} = schulze.from-array votes, {}
+  sch.from-array votes, {is-row-based: false}
+    .then ({candidates, pair-preference-matrix}) ->
+      local.ranked = true
+      hot.setDataAtCell 0, count.col, 'Rank'
+      hot.updateSettings cells: (r, c) -> if c == count.col => return {readOnly: true} else return {}
+      hot.setDataAtCell [0 til candidates.length].map (i) ->
+        cand = candidates[i]
+        [(cand.idx + 1), (count.col), cand.rank]
 
-  local.ranked = true
-  hot.setDataAtCell 0, count.col, 'Rank'
-  hot.updateSettings cells: (r, c) -> if c == count.col => return {readOnly: true} else return {}
-  hot.setDataAtCell [0 til rank.length].map (i) ->
-    cand = rank[i]
-    [(cand.idx + 1), (count.col), cand.rank]
-
-  detailtable.loadData detail
-  width = (count.row - 1) * 30 + 120 >? 800
-  if width < window.innerWidth * 0.75 => width = window.innerWidth * 0.75
-  else if width > window.innerWidth => width = window.innerWidth
-  document.querySelector '#detail-grid' .style.width = "#{width}px"
-  detailtable.updateSettings width: width
+      detailtable.loadData pair-preference-matrix.byRank.map -> [it.0.rank,it.0.name] ++ it.slice 1
+      width = (count.row - 1) * 30 + 120 >? 800
+      if width < window.innerWidth * 0.75 => width = window.innerWidth * 0.75
+      else if width > window.innerWidth => width = window.innerWidth
+      document.querySelector '#detail-grid' .style.width = "#{width}px"
+      detailtable.updateSettings width: width
 
 update!
 onchange = -> update!

@@ -1,4 +1,4 @@
-if require? => require! <[papaparse]>
+papaparse = if window? => window.papaparse else if module? and require? => require "papaparse" else null
 
 pad = (v, len, align-left = false) ->
   spc = (" " * (len - "#v".length))

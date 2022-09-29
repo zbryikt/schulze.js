@@ -1,8 +1,8 @@
 (function(){
   var papaparse, pad, outputDefaultOptions, inputDefaultOptions, schulze;
-  if (typeof require != 'undefined' && require !== null) {
-    papaparse = require('papaparse');
-  }
+  papaparse = typeof window != 'undefined' && window !== null
+    ? window.papaparse
+    : (typeof module != 'undefined' && module !== null) && (typeof require != 'undefined' && require !== null) ? require("papaparse") : null;
   pad = function(v, len, alignLeft){
     var spc;
     alignLeft == null && (alignLeft = false);
