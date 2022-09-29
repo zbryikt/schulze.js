@@ -57,6 +57,7 @@ members in the resolved object:
      - `sort`: sort candidates by their rank. default false ( in input order )
  - fromCsv(CSVString, importOption) - import data in CSV format
  - fromArray(2DArray, importOption) - import data directly as an 2D array
+ - fromArraySync(2DArray, importOption) - import data directly as an 2D array. Synchronized version.
  - fromJson(json, importOption) - import data in JSON defined as described below.
 
 

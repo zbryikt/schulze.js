@@ -99,37 +99,41 @@
       }
       return schulze.toGrid(this._result.pairPreferenceMatrix[opt.byIndex ? "byIndex" : "byRank"]);
     },
+    fromArraySync: function(data, opt){
+      var ref$, candidateNames, judgeNames;
+      opt == null && (opt = {});
+      this.opt = opt = import$(import$({}, inputDefaultOptions), opt);
+      this.data = data;
+      ref$ = [
+        data.map(function(it){
+          return it[0];
+        }), JSON.parse(JSON.stringify(data[0]))
+      ].map(function(it){
+        return it.slice(1, it.length);
+      }), candidateNames = ref$[0], judgeNames = ref$[1];
+      if (opt.isRowBased) {
+        ref$ = [judgeNames, candidateNames], candidateNames = ref$[0], judgeNames = ref$[1];
+      }
+      this.judges = judgeNames.map(function(name, idx){
+        return {
+          name: name,
+          idx: idx
+        };
+      });
+      this.candidates = candidateNames.map(function(name, idx){
+        return {
+          name: name,
+          idx: idx
+        };
+      });
+      this.C = this.candidates.length;
+      return this.compute(opt);
+    },
     fromArray: function(data, opt){
       var this$ = this;
       opt == null && (opt = {});
-      this.opt = opt = import$(import$({}, inputDefaultOptions), opt);
       return Promise.resolve().then(function(){
-        var ref$, candidateNames, judgeNames;
-        this$.data = data;
-        ref$ = [
-          data.map(function(it){
-            return it[0];
-          }), JSON.parse(JSON.stringify(data[0]))
-        ].map(function(it){
-          return it.slice(1, it.length);
-        }), candidateNames = ref$[0], judgeNames = ref$[1];
-        if (opt.isRowBased) {
-          ref$ = [judgeNames, candidateNames], candidateNames = ref$[0], judgeNames = ref$[1];
-        }
-        this$.judges = judgeNames.map(function(name, idx){
-          return {
-            name: name,
-            idx: idx
-          };
-        });
-        this$.candidates = candidateNames.map(function(name, idx){
-          return {
-            name: name,
-            idx: idx
-          };
-        });
-        this$.C = this$.candidates.length;
-        return this$.compute(opt);
+        return this$.fromArraySync(data, opt);
       });
     },
     fromJson: function(json, opt){

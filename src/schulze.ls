@@ -78,18 +78,20 @@ schulze.prototype = Object.create(Object.prototype) <<< do
     if !@_result => @compute!
     schulze.to-grid @_result.pair-preference-matrix[if opt.by-index => "byIndex" else "byRank"]
 
-  from-array: (data, opt = {}) ->
+  from-array-sync: (data, opt = {}) ->
     @opt = opt = {} <<< input-default-options <<< opt
-    Promise.resolve!then ~>
-      @data = data
-      [candidate-names, judge-names] = [
-        data.map(->it.0), JSON.parse(JSON.stringify(data.0))
-      ].map(-> it.slice 1, it.length)
-      if opt.is-row-based => [candidate-names, judge-names] = [judge-names, candidate-names]
-      @judges = judge-names.map (name,idx) -> {name,idx}
-      @candidates = candidate-names.map (name,idx) -> {name,idx}
-      @C = @candidates.length
-      @compute opt
+    @data = data
+    [candidate-names, judge-names] = [
+      data.map(->it.0), JSON.parse(JSON.stringify(data.0))
+    ].map(-> it.slice 1, it.length)
+    if opt.is-row-based => [candidate-names, judge-names] = [judge-names, candidate-names]
+    @judges = judge-names.map (name,idx) -> {name,idx}
+    @candidates = candidate-names.map (name,idx) -> {name,idx}
+    @C = @candidates.length
+    @compute opt
+
+  from-array: (data, opt = {}) ->
+    Promise.resolve!then ~> @from-array-sync data, opt
 
   from-json: (json, opt = {}) ->
     @opt = opt = {} <<< input-default-options <<< opt

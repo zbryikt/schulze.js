@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.2.1
+
+ - add synchronized version `fromArray` api.
+
+
 ## v0.2.0
 
  - upgrade dependencies to fix vulnerabilities

@@ -3,7 +3,7 @@
   "name": "schulze.js",
   "license": "MIT",
   "description": "Schulze method JavaScript implementation.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "files": [
     "dist/**/*"
   ],
