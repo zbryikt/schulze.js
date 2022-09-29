@@ -2,22 +2,25 @@
 doctype html
 html
   block vars
-  include @/bootstrap.ldui/dist/index.pug
+  include @/@loadingio/bootstrap.ext/index.pug
   head
     block prehead
     link(rel="preconnect",href="https://fonts.gstatic.com")
-    +css("https://fonts.googleapis.com/css2?family=Martel:wght@900&family=Rubik:wght@300;400;500&display=swap")
-    +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
-    +css("assets/lib/bootstrap.ldui/main/bootstrap.ldui.min.css")
-    +css("assets/lib/ldiconfont/main/ldif.min.css")
-    +css("assets/lib/ldcover/main/ldcv.min.css")
-    +css("css/index.css")
+    +css([
+      {url: "https://fonts.googleapis.com/css2?family=Martel:wght@900&family=Rubik:wght@300;400;500&display=swap"},
+      {name: "bootstrap", path: "dist/css/bootstrap.min.css"},
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "ldiconfont"},
+      {name: "ldcover"},
+      {url: "/css/index.min.css"}
+    ])
     block head
   body
     block body
-    +script("assets/lib/bootstrap.native/main/bootstrap-native.min.js")
-    +script("assets/lib/bootstrap.ldui/main/bootstrap.ldui.min.js")
-    +script("assets/lib/@loadingio/ldquery/main/ldq.min.js")
-    +script("assets/lib/ldcover/main/ldcv.min.js")
-    +script("assets/lib/ldview/main/index.min.js")
+    +script([
+      {name: "bootstrap.native", path: "dist/bootstrap-native-v4.min.js"},
+      {name: "@loadingio/ldquery"},
+      {name: "ldcover"},
+      {name: "ldview"}
+    ])
     block script
