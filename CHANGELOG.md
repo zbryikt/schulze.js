@@ -1,8 +1,9 @@
 # Change Log
 
-## v0.1.1 (upcoming)
+## v0.2.0
 
  - upgrade dependencies to fix vulnerabilities
+ - use `index.js` and `index.min.js` as the default lib file name
 
 
 ## v0.1.0
