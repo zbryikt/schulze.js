@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.2.2 (upcoming)
+
+ - upgrade `mocha` and `mochawesome` for vulnerabilities fixing
+
+
 ## v0.2.1
 
  - add synchronized version `fromArray` api.
