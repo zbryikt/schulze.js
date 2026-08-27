@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 rm -rf dist
 mkdir -p dist
-echo "build src/schulze.ls -> dist/index.js ..."
-npx lsc --no-header -cp src/schulze.ls > dist/index.js
+echo "build src/index.ls -> dist/index.js ..."
+npx lsc --no-header -cp src/index.ls > dist/index.js
 echo "minifying index.js ..."
 npx uglifyjs dist/index.js > dist/index.min.js
 echo "update web assets ..."
