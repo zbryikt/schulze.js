@@ -1,6 +1,6 @@
 # Change Log
 
-## v0.2.2 (upcoming)
+## v0.2.2
 
  - upgrade `mocha` and `mochawesome` for vulnerabilities fixing
  - fix `main` field in package.json - it still pointed to the pre-v0.2.0 `dist/schulze.js`,
