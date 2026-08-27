@@ -1,4 +1,5 @@
-require! <[fs path ../src/schulze assert]>
+require! <[fs path assert]>
+schulze = require '../src/index'
 
 that = it
 
