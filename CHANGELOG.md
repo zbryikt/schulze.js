@@ -1,6 +1,6 @@
 # Change Log
 
-## v0.2.3 (upcoming)
+## v0.2.3
 
  - add `explain` / `toExplanation` / `path` - explain how a candidate ended up at its
    rank, including the chain of wins behind a candidate that beats it despite losing
