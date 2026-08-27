@@ -6,3 +6,5 @@ web/.view
 *.log
 secret.*
 .nyc_output
+.DS_Store
+/context/shared
