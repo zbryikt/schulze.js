@@ -1,5 +1,15 @@
 # Change Logs
 
+## v0.7.5
+
+ - fix bug: `enableScrolling: false` stops the wheel handler but the sheet still swallows
+   the scroll. `.sheet` is a scroll container even at `overflow: hidden`, and the
+   `overscroll-behavior: contain` guarding against swipe back keeps the gesture from ever
+   reaching the page. it now relaxes to `overscroll-behavior-y: auto` while scrolling is
+   off, via a `no-scrolling` class. the horizontal axis keeps `contain`, that being the
+   axis swipe back lives on, and behaviour with scrolling enabled is unchanged.
+
+
 ## v0.7.4
 
  - fix bug: a sheet with neither an index nor a fixed row/col renders every track

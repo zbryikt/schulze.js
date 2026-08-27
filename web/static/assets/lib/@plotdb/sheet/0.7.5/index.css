@@ -6,6 +6,12 @@
   overscroll-behavior: contain;
 /* sheet may get focus. this prevents unwanted outline. */
   outline: none;
+/* with `enableScrolling: false` we no longer take the wheel, so the page should get it.
+  the horizontal axis keeps `contain` - that is the axis the swipe back gesture lives on,
+  and nothing here scrolls horizontally either way. */
+}
+.sheet.no-scrolling {
+  overscroll-behavior-y: auto;
 }
 .sheet .inner {
   z-index: 1;

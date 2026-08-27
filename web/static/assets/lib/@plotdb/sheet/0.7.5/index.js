@@ -150,6 +150,7 @@
       this.dom["slide-x"].style.display = this.dom["slide-y"].style.display = 'none';
     }
     this.scrollbar = !!this.opt.scrollbar;
+    this.enableScrolling = this.opt.enableScrolling != null ? !!this.opt.enableScrolling : true;
     ['x', 'y'].map(function(it){
       var x$, n;
       x$ = n = document.createElement('div');
@@ -162,6 +163,9 @@
     });
     if (this.scrollbar) {
       this.dom.sheet.classList.add('has-scrollbar');
+    }
+    if (!this.enableScrolling) {
+      this.dom.sheet.classList.add('no-scrolling');
     }
     this.dom.edit.appendChild(this.dom.textarea);
     this._init();
@@ -600,7 +604,7 @@
       document.addEventListener('wheel', function(e){
         var inscope, spos, ref$, dx, dy, ox, oy;
         inscope = this$.eventInScope(e);
-        if (this$.opt.enableScrolling != null && !this$.opt.enableScrolling) {
+        if (!this$.enableScrolling) {
           return;
         }
         if (!(this$.opt.scrollLock != null) || this$.opt.scrollLock) {

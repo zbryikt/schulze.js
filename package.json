@@ -37,7 +37,7 @@
     "@loadingio/bootstrap.ext": "^0.0.12",
     "@loadingio/ldquery": "^3.0.6",
     "@plotdb/guides": "github:plotdb/guides#master",
-    "@plotdb/sheet": "^0.7.4",
+    "@plotdb/sheet": "^0.7.5",
     "@zbryikt/deploy": "^0.0.4",
     "@zbryikt/template": "^2.4.3",
     "bootstrap": "^4.6.1",

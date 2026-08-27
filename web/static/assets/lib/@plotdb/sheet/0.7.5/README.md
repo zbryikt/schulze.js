@@ -55,6 +55,9 @@ initialize:
    - the difference between `scrollLock` and `enableScrolling` is that:
      - `scrollLock` is for horizontal scrolling that may conflict with browser gesture.
      - `enableScrolling` is for mouse / trackpad scrolling behavior
+   - when false the sheet stops taking the wheel, and lets a vertical scroll started over
+     it reach the page instead of holding on to it. pair it with `scrollbar: true` so the
+     grid can still be scrolled.
  - `data`: initial data, as array of arrays
  - `slider`: default false. show slider widgets if true.
  - `scrollbar`: default false. show overlay scrollbars if true.
