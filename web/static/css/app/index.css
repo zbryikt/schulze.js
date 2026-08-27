@@ -1,25 +1,36 @@
 body {
+  overscroll-behavior: contain;
   font-family: arial;
 }
-input {
-  padding: 4px 2px;
-  font-size: 14px;
+#grid > .inner {
+  height: 360px;
+}
+#detail-grid > .inner {
+  height: 700px;
+}
+.sheet {
+  border: 1px solid #ddd;
   border-radius: 3px;
-  border: 1px solid #ccc;
-  width: 60px;
   text-align: center;
-  outline: none;
 }
-td,
-th {
-  vertical-align: middle !important;
+.sheet .cell.frozen {
+  background: #f6f7f8;
+  color: #555;
 }
-.win {
-  background: #9f9 !important;
+.sheet .cell.name {
+  text-align: left;
+  padding-left: 0.5em;
 }
-.lose {
-  background: #f99 !important;
+.sheet .cell.rank {
+  background: #f6f7f8;
+  font-weight: 500;
 }
-.tie {
-  background: #eee !important;
+.sheet .cell.win {
+  background: #9f9;
+}
+.sheet .cell.lose {
+  background: #f99;
+}
+.sheet .cell.tie {
+  background: #eee;
 }

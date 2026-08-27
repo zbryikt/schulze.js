@@ -1,21 +1,35 @@
+// swipe back gets sticky once triggered anywhere, so contain it on body.
+// https://github.com/plotdb/sheet#swipe-back-issue
 body
+  overscroll-behavior: contain
   font-family: arial
 
-input
-  padding: 4px 2px
-  font-size: 14px
+// direct child only - sheet builds its own `.inner` underneath, and sizing that one
+// instead collapses every row.
+#grid > .inner
+  height: 360px
+
+#detail-grid > .inner
+  height: 700px
+
+.sheet
+  border: 1px solid #ddd
   border-radius: 3px
-  border: 1px solid #ccc
-  width: 60px
   text-align: center
-  outline: none
 
-td, th
-  vertical-align: middle!important
-
-.win
-  background: #9f9!important
-.lose
-  background: #f99!important
-.tie
-  background: #eee!important
+  // frozen row / col are exactly the header row and the label column here
+  .cell.frozen
+    background: #f6f7f8
+    color: #555
+  .cell.name
+    text-align: left
+    padding-left: .5em
+  .cell.rank
+    background: #f6f7f8
+    font-weight: 500
+  .cell.win
+    background: #9f9
+  .cell.lose
+    background: #f99
+  .cell.tie
+    background: #eee

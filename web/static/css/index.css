@@ -19,6 +19,22 @@ h3,
 h4 {
   font-family: 'Marte', serif;
 }
-.handsontable td {
-  vertical-align: middle;
+#sample-form > .inner {
+  width: max-content;
+  max-width: 100%;
+  height: 176px;
+  margin: 0 auto;
+}
+.sheet {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  text-align: center;
+}
+.sheet .cell.frozen {
+  background: #f6f7f8;
+  color: #555;
+}
+.sheet .cell.name {
+  text-align: left;
+  padding-left: 0.5em;
 }

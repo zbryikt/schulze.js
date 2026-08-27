@@ -2,9 +2,7 @@ extends /base.pug
 block prehead
   base(href="..")
 block head
-  +css("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/css/pikaday.min.css")
-  //-+css("/assets/handsontable/dist/handsontable.css")
-  +css("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.css")
+  +css({name: "@plotdb/sheet"})
   +css("/css/app/index.css")
 block body
   .w-1024.rwd.mx-auto.my-4
@@ -17,18 +15,16 @@ block body
       .input.mb-4
         .btn.btn-outline-dark.mr-2(data-action="clear") Reset
         .btn.btn-outline-dark(data-action="sample") Load Sample
-      .inner.d-inline-block.text-sm.w-100
+      .inner.text-sm.w-100
     #detail-grid.mt-4.text-center.mx-auto
       h3 Detail Versus Result
       p.text-muted Cell[#[code row]][#[code col]] = the number of winning vote for #[code row] against #[code col].
-      .inner.d-inline-block.text-sm.w-100.overflow-hidden(style="height:700px")
+      .inner.text-sm.w-100
   .p-4.text-center
     a(href="/") Documentation
 
 block script
-  +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
-  +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
-  +script("https://cdn.jsdelivr.net/npm/numbro@2/dist/numbro.min.js")
-  +script("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.js")
+  +script({name: "papaparse", path: "index.js"})
+  +script({name: "@plotdb/sheet"})
   +script("/assets/lib/schulze.js/dev/index.min.js")
   +script("/js/app/index.js")

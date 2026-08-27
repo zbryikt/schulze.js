@@ -12,6 +12,7 @@
  - fix quote escaping in `toCsv` - `"` in a candidate name is now doubled per RFC 4180.
  - expose the `invalidType` import option, and throw on an unknown value instead of
    silently producing an empty pairwise preference matrix.
+ - demo site: replace Handsontable with `@plotdb/sheet`.
 
 
 ## v0.2.1

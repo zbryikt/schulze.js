@@ -1,7 +1,6 @@
 extends /base.pug
 block head
-  +css("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/css/pikaday.min.css")
-  +css("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.css")
+  +css({name: "@plotdb/sheet"})
 block body
   body
 
@@ -138,8 +137,5 @@ block body
       +nbr(3)
 
 block script
-  +script("https://cdn.jsdelivr.net/npm/pikaday@1.5.1/pikaday.min.js")
-  +script("https://cdn.jsdelivr.net/npm/moment@2.20.1/moment.min.js")
-  +script("https://cdn.jsdelivr.net/npm/numbro@2/dist/numbro.min.js")
-  +script("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.min.js")
+  +script({name: "@plotdb/sheet"})
   +script("/js/index.js")

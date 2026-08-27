@@ -7,14 +7,15 @@ data = [
   ["Cand 5", 50, 20, '', 30],
 ]
 
-hot = new Handsontable(document.querySelector('#sample-form .inner'), {
-  data: data,
-  rowHeaders: true,
-  colHeaders: true,
-  filters: true,
-  dropdownMenu: true
-  rowHeights: 35
-  colWidths: 80
-  modifyColWidth: (w, col) -> if col == 0 => return 300
-  stretchH: \all
-})
+# a read-only illustration of the input format - `dim` trims the rendered window down to
+# exactly the data, so there is no empty space or scrolling around it.
+new sheet do
+  root: '#sample-form .inner'
+  data: data
+  editing: false
+  enable-scrolling: false
+  idx: {row: false, col: false}
+  dim: {row: data.length, col: data.0.length}
+  frozen: {row: 1, col: 1}
+  size: {col: ['12em']}
+  class: {col: ['name']}
