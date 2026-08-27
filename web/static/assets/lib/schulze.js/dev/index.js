@@ -1,8 +1,23 @@
 (function(){
-  var papaparse, pad, outputDefaultOptions, inputDefaultOptions, schulze;
-  papaparse = typeof window != 'undefined' && window !== null
-    ? window.papaparse
-    : (typeof module != 'undefined' && module !== null) && (typeof require != 'undefined' && require !== null) ? require("papaparse") : null;
+  var papaparse, invalidScore, pad, outputDefaultOptions, inputDefaultOptions, schulze;
+  papaparse = function(){
+    var e;
+    if ((typeof window != 'undefined' && window !== null) && (window.Papa || window.papaparse)) {
+      return window.Papa || window.papaparse;
+    }
+    if ((typeof module != 'undefined' && module !== null) && (typeof require != 'undefined' && require !== null)) {
+      try {
+        return require("papaparse");
+      } catch (e$) {
+        e = e$;
+        return null;
+      }
+    }
+    return null;
+  }();
+  invalidScore = function(v){
+    return v === null || v === '' || (typeof v === 'string' && !v.trim()) || isNaN(v);
+  };
   pad = function(v, len, alignLeft){
     var spc;
     alignLeft == null && (alignLeft = false);
@@ -17,7 +32,8 @@
   inputDefaultOptions = {
     isRowBased: true,
     higherIsBetter: true,
-    showWarning: true
+    showWarning: true,
+    invalidType: 'A'
   };
   schulze = function(opt){
     opt == null && (opt = {});
@@ -58,7 +74,7 @@
         });
       }
       return c.map(function(it){
-        return "\"" + it.name.replace(/"/g, '"') + "\"," + it.rank;
+        return "\"" + it.name.replace(/"/g, '""') + "\"," + it.rank;
       }).join('\n').trim();
     },
     toGrid: function(mat){
@@ -94,6 +110,7 @@
       return schulze.toCsv(this._result.candidates, opt);
     },
     toGrid: function(opt){
+      opt == null && (opt = {});
       if (!this._result) {
         this.compute();
       }
@@ -249,10 +266,14 @@
         for (i$ = 0, to$ = ballot.length; i$ < to$; ++i$) {
           i = i$;
           value = ballot[i];
-          if (isNaN(value) && opt.showWarning) {
-            console.log("warning: '" + value + "' is type NaN (" + (i + 1) + "th element for " + j.name + ")");
+          if (invalidScore(value)) {
+            if (opt.showWarning) {
+              console.log("warning: '" + value + "' is not a valid score (" + (i + 1) + "th element for " + j.name + ")");
+            }
+            ballot[i] = NaN;
+          } else {
+            ballot[i] = +value;
           }
-          ballot[i] = +value;
         }
         return ballot.map(function(v){
           var ret;
@@ -272,10 +293,9 @@
       return this.ballots;
     },
     pairPreferenceMatrix: function(opt){
-      var res$, i$, to$, i, lresult$, j$, to1$, j, ref$, len$, judge, ballot, k$;
-      opt == null && (opt = {
-        invalidType: 'A'
-      });
+      var invalidType, res$, i$, to$, i, lresult$, j$, to1$, j, ref$, len$, judge, ballot, k$;
+      opt == null && (opt = {});
+      invalidType = opt.invalidType || 'A';
       res$ = [];
       for (i$ = 0, to$ = this.C; i$ < to$; ++i$) {
         i = i$;
@@ -294,7 +314,7 @@
           i = j$;
           for (k$ = 0, to1$ = this.C; k$ < to1$; ++k$) {
             j = k$;
-            switch (opt.invalidType) {
+            switch (invalidType) {
             case 'A':
               if (isNaN(ballot[i]) || isNaN(ballot[j])) {
                 continue;
@@ -312,7 +332,7 @@
               }
               break;
             default:
-              new Error("calculating pair-preference-matrix: undefined invalid-type");
+              throw new Error("calculating pair-preference-matrix: unknown invalid-type '" + invalidType + "'");
             }
           }
         }
@@ -446,7 +466,7 @@
       var ranks, byIndex, byRank, i$, to$, i, j$, to1$, j, this$ = this;
       opt = opt || this.opt || {};
       this.getBallots(opt);
-      this.pairPreferenceMatrix();
+      this.pairPreferenceMatrix(opt);
       this.strengthOfStrongestPathMatrix();
       this.partialOrder();
       ranks = this.partialRank.reduce(function(a, b){

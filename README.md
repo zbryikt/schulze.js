@@ -14,13 +14,16 @@ with NodeJS:
     npm install --save schulze.js
 
 
-in borwser: download schulze.min.js and include it in your HTML with following:
+in browser: download `dist/index.min.js` and include it in your HTML with following:
 
-    <script src="<path-to-your>/schulze.min.js"></script>
+    <script src="<path-to-your>/index.min.js"></script>
 
 or, from a CDN:
 
-    <script src="https://cdn.jsdelivr.net/gh/zbryikt/schulze.js@v0.1.0/dist/schulze.min.js"/>
+    <script src="https://cdn.jsdelivr.net/gh/zbryikt/schulze.js@v0.2.2/dist/index.min.js"></script>
+
+`fromCsv` additionally requires PapaParse to be loaded beforehand ( it is picked up from
+the global `Papa` in browser, or from `require("papaparse")` in NodeJS ).
 
 
 ## Sample Usage
@@ -68,6 +71,10 @@ members in the resolved object:
    - true:  Judge prefers A more then B if score of A > score of B
    - false: Judge prefers B more then A if score of A > score of B
  - showWarning: warning for any unparsable input. default true
+ - invalidType: how to treat a cell with no valid score ( empty, null or non-numeric ). default `A`
+   - `A`: unranked candidates are incomparable and are simply ignored. this is what CIVS does.
+   - `B`: every ranked candidate is preferred over every unranked one, with no preference among
+     the unranked ones.
 
 
 ## Sample Input Format

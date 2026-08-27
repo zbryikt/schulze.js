@@ -85,3 +85,46 @@ describe 'output for sample dataset', ->
   that "dataset rand-c32-j10", -> check \rand-c32-j10
   that "dataset rand-c7-j100", -> check \rand-c7-j100
   that "dataset rand-c200-j20", -> check \rand-c200-j20
+
+describe 'invalid input handling', ->
+  # `isNaN('')` and `isNaN(null)` are both false, so these used to be read as a score of 0.
+  that "empty and null cells are unranked, not 0", ->
+    vote = new schulze!
+    vote.from-array-sync(
+      [<[j A B C]>, ['j1', 1, 2, ''], ['j2', 1, 2, null]]
+      {higher-is-better: false, show-warning: false}
+    )
+    for ballot in vote.ballots
+      assert.deep-strict-equal ballot.slice(0,2), [1,2], new Error("valid scores mis-ranked")
+      assert.ok isNaN(ballot.2), new Error("empty cell should be unranked")
+
+  that "invalidType B prefers ranked candidates over unranked ones", ->
+    vote = new schulze!
+    vote.from-array-sync(
+      [<[j A B C]>, ['j1', 1, 2, ''], ['j2', 1, 2, '']]
+      {higher-is-better: false, show-warning: false, invalid-type: \B}
+    )
+    assert.deep-strict-equal vote.N, [[0,2,2],[0,0,2],[0,0,0]], new Error("output mismatch")
+
+  that "unknown invalidType throws", ->
+    vote = new schulze!
+    assert.throws(
+      -> vote.from-array-sync [<[j A]>, ['j1', 1]], {show-warning: false, invalid-type: \Z}
+      /unknown invalid-type/
+    )
+
+describe 'output format edge cases', ->
+  that "to-grid works without an option", ->
+    vote = new schulze!
+    vote.from-array-sync(
+      [<[j A B C]>, ['j1', 1, 2, 3], ['j2', 2, 1, 3], ['j3', 3, 1, 2]]
+      {higher-is-better: false, show-warning: false}
+    )
+    assert.equal typeof(vote.to-grid!), \string, new Error("to-grid() should not throw")
+
+  that "to-csv escapes double quotes", ->
+    assert.equal(
+      schulze.to-csv([{name: 'a"b', idx: 0, rank: 1}])
+      '"a""b",1'
+      new Error("output mismatch")
+    )

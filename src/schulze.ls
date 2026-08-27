@@ -1,4 +1,16 @@
-papaparse = if window? => window.papaparse else if module? and require? => require "papaparse" else null
+papaparse = do ->
+  # PapaParse exposes itself as `Papa` in its UMD build. `papaparse` is kept for backward compatibility.
+  if window? and (window.Papa or window.papaparse) => return window.Papa or window.papaparse
+  if module? and require? =>
+    try
+      return require "papaparse"
+    catch e
+      return null
+  return null
+
+# a cell is invalid if it carries no score at all. note that `isNaN` alone is not enough:
+# isNaN('') and isNaN(null) are both false, yet `+''` and `+null` are 0 - a perfectly valid score.
+invalid-score = (v) -> v == null or v == '' or (typeof(v) == \string and !v.trim!) or isNaN(v)
 
 pad = (v, len, align-left = false) ->
   spc = (" " * (len - "#v".length))
@@ -11,6 +23,7 @@ input-default-options = do
   is-row-based: true
   higher-is-better: true
   show-warning: true
+  invalid-type: \A
 
 schulze = (opt = {}) ->
   @opt = opt
@@ -50,7 +63,7 @@ schulze <<< do
     if opt.sort => c.sort((a,b) -> if a.rank == b.rank => a.idx - b.idx else a.rank - b.rank)
     else c.sort (a,b) -> a.idx - b.idx
     return c
-      .map -> "\"#{it.name.replace(/"/g,'\"')}\",#{it.rank}"
+      .map -> "\"#{it.name.replace(/"/g,'""')}\",#{it.rank}"
       .join \\n
       .trim!
 
@@ -74,7 +87,7 @@ schulze.prototype = Object.create(Object.prototype) <<< do
     if !@_result => @compute!
     schulze.to-csv @_result.candidates, opt
 
-  to-grid: (opt) ->
+  to-grid: (opt = {}) ->
     if !@_result => @compute!
     schulze.to-grid @_result.pair-preference-matrix[if opt.by-index => "byIndex" else "byRank"]
 
@@ -141,9 +154,11 @@ schulze.prototype = Object.create(Object.prototype) <<< do
       # data validation / cleaning
       for i from 0 til ballot.length =>
         value = ballot[i]
-        if isNaN(value) and opt.show-warning =>
-          console.log "warning: '#value' is type NaN (#{i+1}th element for #{j.name})"
-        ballot[i] = +value
+        if invalid-score(value) =>
+          if opt.show-warning =>
+            console.log "warning: '#value' is not a valid score (#{i+1}th element for #{j.name})"
+          ballot[i] = NaN
+        else ballot[i] = +value
       ballot.map (v) ->
         if isNaN(v) =>
           # even if values are undefined, we still give them a rank, or ...
@@ -161,12 +176,13 @@ schulze.prototype = Object.create(Object.prototype) <<< do
   #      - `A`: just ignore ( default value )
   #      - `B`: ranked items are preferred than all unranked. indifference between unranked.
   #  - return value: PPM. PPM is also updated to @N.
-  pair-preference-matrix: (opt = {invalid-type: \A}) ->
+  pair-preference-matrix: (opt = {}) ->
+    invalid-type = opt.invalid-type or \A
     @N = for i from 0 til @C => for j from 0 til @C => 0
     for judge in @judges =>
       ballot = @ballots[judge.idx]
       for i from 0 til @C => for j from 0 til @C =>
-        switch opt.invalid-type
+        switch invalid-type
         # A : count only when both i or j is defined.
         #     treat all undefined rank in-comparable. CIVS use this option.
         | \A
@@ -179,7 +195,7 @@ schulze.prototype = Object.create(Object.prototype) <<< do
         | \B
           if isNaN(ballot[i]) => continue
           if isNaN(ballot[j]) or ballot[i] < ballot[j] => @N[i][j]++
-        | otherwise => new Error("calculating pair-preference-matrix: undefined invalid-type")
+        | otherwise => throw new Error("calculating pair-preference-matrix: unknown invalid-type '#invalid-type'")
     return @N
 
   # Calculating Strength of the Strongest Path Matrix (SSPM)
@@ -237,7 +253,7 @@ schulze.prototype = Object.create(Object.prototype) <<< do
   compute: (opt) ->
     opt = opt or @opt or {}
     @get-ballots opt
-    @pair-preference-matrix!
+    @pair-preference-matrix opt
     @strength-of-strongest-path-matrix!
     @partial-order!
     ranks = @partial-rank

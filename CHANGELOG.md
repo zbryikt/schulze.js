@@ -3,6 +3,15 @@
 ## v0.2.2 (upcoming)
 
  - upgrade `mocha` and `mochawesome` for vulnerabilities fixing
+ - fix `main` field in package.json - it still pointed to the pre-v0.2.0 `dist/schulze.js`,
+   which made `require("schulze.js")` fail.
+ - treat empty / null cells as unranked instead of score 0. `isNaN` alone let `''` and `null`
+   through as a valid score of 0.
+ - fix PapaParse lookup in browser - its UMD global is `Papa`, not `papaparse`.
+ - `toGrid()` no longer throws when called without an option.
+ - fix quote escaping in `toCsv` - `"` in a candidate name is now doubled per RFC 4180.
+ - expose the `invalidType` import option, and throw on an unknown value instead of
+   silently producing an empty pairwise preference matrix.
 
 
 ## v0.2.1
