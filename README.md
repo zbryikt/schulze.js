@@ -62,6 +62,61 @@ members in the resolved object:
  - fromArray(2DArray, importOption) - import data directly as an 2D array
  - fromArraySync(2DArray, importOption) - import data directly as an 2D array. Synchronized version.
  - fromJson(json, importOption) - import data in JSON defined as described below.
+ - explain(nameOrIndex) - explain how a candidate ended up at its rank. See next section.
+ - toExplanation(nameOrIndex) - the same thing as human readable text.
+ - path(fromIndex, toIndex) - one strongest path between two candidates, as a list of
+   hops `{from, to, win, lose}`. A single hop means the strongest path is just the head
+   to head result. There may be several equally strong paths - this returns one of them.
+
+
+## Explaining a Rank
+
+A pairwise preference matrix says who beat whom, but not why the ranking came out the
+way it did - under the Schulze method a candidate can lose the head to head and still
+be ranked above the winner, because it reaches it through a chain of other candidates.
+`explain` spells that out:
+
+    vote.explain("Project 5")
+
+    {
+      candidate: {idx, name, rank, level},
+      blockedBy: [{
+        candidate: {idx, name, rank, level},
+        strength: [3, 1],       // strength of the strongest path, i.e. its weakest link
+        path: [                 // the chain behind it, one entry per hop
+          {from: 3, to: 2, win: 3, lose: 1},
+          {from: 2, to: 4, win: 3, lose: 1}
+        ],
+        reverse: {path, strength},   // the strongest path the other way round
+        direct: {win: 1, lose: 2},   // the head to head result on its own
+        indirect: true               // true when the head to head says otherwise
+      }],
+      beats: [...],           // candidates this one is ranked above
+      tiedWith: [...],        // candidates sharing this rank
+      rankFrom: {level, above: [...]}
+    }
+
+`toExplanation` renders the same data as text:
+
+    Project 5 is ranked 3 of 5.
+
+    beaten by 2 candidate(s):
+
+      Project 4 ( rank 1 ), path strength 3:1
+        Project 5 wins the head to head 2:1, overruled by this chain:
+          Project 4 > Project 3  3:1
+          Project 3 > Project 5  3:1
+
+      Project 3 ( rank 2 ), path strength 3:1
+          Project 3 > Project 5  3:1
+
+Two things are worth keeping apart here:
+
+ - **why a candidate can be no higher** - `blockedBy`. Every candidate beating it, and
+   the strongest path behind that win.
+ - **why the rank number reads as it does** - `rankFrom`. The rank is 1 + the number of
+   candidates placed in earlier levels, so candidates tied above take up numbers without
+   beating anything. `rankFrom.above` is therefore often longer than `blockedBy`.
 
 
 ## Import Options

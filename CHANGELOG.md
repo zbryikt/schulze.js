@@ -1,5 +1,22 @@
 # Change Log
 
+## v0.2.3
+
+ - add `explain` / `toExplanation` / `path` - explain how a candidate ended up at its
+   rank, including the chain of wins behind a candidate that beats it despite losing
+   the head to head. `pred` was computed but never read until now.
+ - demo site: click a row in the pairwise matrix to see that explanation drawn out.
+   the default dataset now shows an indirect win, which the old one did not.
+ - demo site: both sheets take `enableScrolling: false`, so the wheel goes to the page
+   and the grids are scrolled by their own scrollbars instead of swallowing the gesture.
+   `@plotdb/sheet` relaxes `overscroll-behavior-y` by itself once scrolling is off, so
+   nothing is needed here beyond the option - `.sheet` is a scroll container even at
+   `overflow: hidden`, and the `contain` it ships against swipe back would otherwise
+   keep the scroll from ever reaching the page.
+ - fix `npm test`: `test/index.ls` still required `../src/schulze` after the rename
+   to `src/index.ls`, and mocha reports that as `ERR_UNKNOWN_FILE_EXTENSION`.
+
+
 ## v0.2.2
 
  - upgrade `mocha` and `mochawesome` for vulnerabilities fixing

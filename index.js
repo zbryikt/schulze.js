@@ -116,6 +116,170 @@
       }
       return schulze.toGrid(this._result.pairPreferenceMatrix[opt.byIndex ? "byIndex" : "byRank"]);
     },
+    _index: function(target){
+      var c;
+      if (typeof target === 'number') {
+        return this.candidates[target]
+          ? target
+          : -1;
+      }
+      c = this.candidates.filter(function(it){
+        return it.name === target;
+      })[0];
+      return c
+        ? c.idx
+        : -1;
+    },
+    path: function(e, f){
+      var ref$, node, cur, i$, to$, i, this$ = this;
+      if (e === f || !this.pred.length) {
+        return null;
+      }
+      ref$ = [[f], f], node = ref$[0], cur = ref$[1];
+      for (i$ = 0, to$ = this.C; i$ < to$; ++i$) {
+        i = i$;
+        if (cur === e) {
+          break;
+        }
+        cur = this.pred[e][cur];
+        if (!(cur != null) || cur < 0) {
+          return null;
+        }
+        node.unshift(cur);
+      }
+      if (node[0] !== e) {
+        return null;
+      }
+      return (function(){
+        var i$, to$, results$ = [];
+        for (i$ = 0, to$ = node.length - 1; i$ < to$; ++i$) {
+          results$.push(i$);
+        }
+        return results$;
+      }()).map(function(i){
+        return {
+          from: node[i],
+          to: node[i + 1],
+          win: this$.N[node[i]][node[i + 1]],
+          lose: this$.N[node[i + 1]][node[i]]
+        };
+      });
+    },
+    explain: function(target){
+      var idx, byIdx, level, brief, blockedBy, this$ = this;
+      if (!this._result) {
+        this.compute();
+      }
+      idx = this._index(target);
+      if (idx < 0) {
+        throw new Error("explain: no such candidate `" + target + "`");
+      }
+      byIdx = {};
+      this._result.candidates.map(function(it){
+        return byIdx[it.idx] = it;
+      });
+      level = {};
+      this.partialRank.map(function(group, i){
+        return group.map(function(c){
+          return level[c.idx] = i;
+        });
+      });
+      brief = function(i){
+        return {
+          idx: i,
+          name: this$.candidates[i].name,
+          rank: byIdx[i].rank,
+          level: level[i]
+        };
+      };
+      blockedBy = (function(){
+        var i$, to$, results$ = [];
+        for (i$ = 0, to$ = this.C; i$ < to$; ++i$) {
+          results$.push(i$);
+        }
+        return results$;
+      }.call(this)).filter(function(j){
+        return j !== idx && this$.gt(this$.P[j][idx], this$.P[idx][j]);
+      }).map(function(j){
+        return {
+          candidate: brief(j),
+          strength: this$.P[j][idx],
+          path: this$.path(j, idx),
+          reverse: {
+            path: this$.path(idx, j),
+            strength: this$.P[idx][j]
+          },
+          direct: {
+            win: this$.N[j][idx],
+            lose: this$.N[idx][j]
+          },
+          indirect: this$.N[idx][j] > this$.N[j][idx]
+        };
+      }).sort(function(a, b){
+        return a.candidate.rank - b.candidate.rank;
+      });
+      return {
+        candidate: brief(idx),
+        blockedBy: blockedBy,
+        beats: (function(){
+          var i$, to$, results$ = [];
+          for (i$ = 0, to$ = this.C; i$ < to$; ++i$) {
+            results$.push(i$);
+          }
+          return results$;
+        }.call(this)).filter(function(j){
+          return j !== idx && this$.gt(this$.P[idx][j], this$.P[j][idx]);
+        }).map(function(j){
+          return brief(j);
+        }),
+        tiedWith: (this.partialRank[level[idx]] || []).filter(function(it){
+          return it.idx !== idx;
+        }).map(function(c){
+          return brief(c.idx);
+        }),
+        rankFrom: {
+          level: level[idx],
+          above: this.partialRank.slice(0, level[idx]).reduce(function(a, b){
+            return a.concat(b);
+          }, []).map(function(c){
+            return brief(c.idx);
+          })
+        }
+      };
+    },
+    toExplanation: function(target){
+      var e, hop, line, i$, ref$, len$, b, j$, ref1$, len1$, h, this$ = this;
+      e = this.explain(target);
+      hop = function(h){
+        return this$.candidates[h.from].name + " > " + this$.candidates[h.to].name + "  " + h.win + ":" + h.lose;
+      };
+      line = [e.candidate.name + " is ranked " + e.candidate.rank + " of " + this.C + "."];
+      if (!e.blockedBy.length) {
+        line.push("", "nothing beats it.");
+      } else {
+        line.push("", "beaten by " + e.blockedBy.length + " candidate(s):");
+        for (i$ = 0, len$ = (ref$ = e.blockedBy).length; i$ < len$; ++i$) {
+          b = ref$[i$];
+          line.push("", "  " + b.candidate.name + " ( rank " + b.candidate.rank + " ), path strength " + b.strength[0] + ":" + b.strength[1]);
+          if (b.indirect) {
+            line.push("    " + e.candidate.name + " wins the head to head " + b.direct.lose + ":" + b.direct.win + ", overruled by this chain:");
+          }
+          for (j$ = 0, len1$ = (ref1$ = b.path || []).length; j$ < len1$; ++j$) {
+            h = ref1$[j$];
+            line.push("      " + hop(h));
+          }
+        }
+      }
+      if (e.tiedWith.length) {
+        line.push("", "tied with: " + e.tiedWith.map(function(it){
+          return it.name;
+        }).join(', '));
+      }
+      if (e.rankFrom.above.length !== e.blockedBy.length) {
+        line.push("", "rank " + e.candidate.rank + " is 1 + the " + e.rankFrom.above.length + " candidate(s) placed above it,", "which is more than the " + e.blockedBy.length + " beating it - ties above take up numbers too.");
+      }
+      return line.join('\n').trim();
+    },
     fromArraySync: function(data, opt){
       var ref$, candidateNames, judgeNames;
       opt == null && (opt = {});
