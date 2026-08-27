@@ -91,6 +91,93 @@ schulze.prototype = Object.create(Object.prototype) <<< do
     if !@_result => @compute!
     schulze.to-grid @_result.pair-preference-matrix[if opt.by-index => "byIndex" else "byRank"]
 
+  # resolve a candidate name or index into an index. -1 if there is no such candidate.
+  _index: (target) ->
+    if typeof(target) == \number => return if @candidates[target] => target else -1
+    c = @candidates.filter(-> it.name == target).0
+    return if c => c.idx else -1
+
+  # Rebuild one strongest path from candidate e to candidate f out of `@pred`, as a list
+  # of hops. A single hop means the strongest path is just the head to head result.
+  # Note that there may be several equally strong paths - `@pred` records one of them.
+  #  - return value: [{from, to, win, lose}, ...], or null if no path is recorded.
+  path: (e, f) ->
+    if e == f or !@pred.length => return null
+    [node, cur] = [[f], f]
+    # a path visits each candidate at most once, so @C steps is already more than enough.
+    # bail out rather than loop forever if `@pred` ever comes back malformed.
+    for i from 0 til @C
+      if cur == e => break
+      cur = @pred[e][cur]
+      if !(cur?) or cur < 0 => return null
+      node.unshift cur
+    if node.0 != e => return null
+    return [0 til node.length - 1].map (i) ~>
+      {from: node[i], to: node[i+1], win: @N[node[i]][node[i+1]], lose: @N[node[i+1]][node[i]]}
+
+  # Explain how a candidate ended up at its rank. Two separate questions are answered:
+  #  - why it can be no higher: every candidate beating it, with the strongest path
+  #    behind that win. the path is the interesting part - Schulze lets a candidate win
+  #    through a chain despite losing the head to head, which a pairwise matrix cannot show.
+  #  - why the rank reads as it does: the rank is 1 + the number of candidates placed in
+  #    earlier levels, so ties above push the number up without anyone extra beating it.
+  #  - target: candidate name or index.
+  explain: (target) ->
+    if !@_result => @compute!
+    idx = @_index target
+    if idx < 0 => throw new Error("explain: no such candidate `#target`")
+    by-idx = {}
+    @_result.candidates.map -> by-idx[it.idx] = it
+    level = {}
+    @partial-rank.map (group, i) -> group.map (c) -> level[c.idx] = i
+    brief = (i) ~> {idx: i, name: @candidates[i].name, rank: by-idx[i].rank, level: level[i]}
+
+    blocked-by = [0 til @C]
+      .filter (j) ~> j != idx and @gt(@P[j][idx], @P[idx][j])
+      .map (j) ~>
+        candidate: brief j
+        strength: @P[j][idx]
+        path: @path j, idx
+        reverse: {path: @path(idx, j), strength: @P[idx][j]}
+        direct: {win: @N[j][idx], lose: @N[idx][j]}
+        # the case worth pointing at: the head to head says the other way round,
+        # and a chain of wins overrules it.
+        indirect: @N[idx][j] > @N[j][idx]
+      .sort (a, b) -> a.candidate.rank - b.candidate.rank
+
+    return {
+      candidate: brief idx
+      blocked-by: blocked-by
+      beats: [0 til @C].filter((j) ~> j != idx and @gt(@P[idx][j], @P[j][idx])).map (j) ~> brief j
+      tied-with: (@partial-rank[level[idx]] or []).filter(-> it.idx != idx).map (c) ~> brief c.idx
+      rank-from:
+        level: level[idx]
+        above: @partial-rank.slice(0, level[idx]).reduce(((a,b) -> a ++ b), []).map (c) ~> brief c.idx
+    }
+
+  # Human readable form of `explain`, in the spirit of `to-grid`.
+  to-explanation: (target) ->
+    e = @explain target
+    hop = (h) ~> "#{@candidates[h.from].name} > #{@candidates[h.to].name}  #{h.win}:#{h.lose}"
+    line = ["#{e.candidate.name} is ranked #{e.candidate.rank} of #{@C}."]
+    if !e.blocked-by.length => line.push "", "nothing beats it."
+    else
+      line.push "", "beaten by #{e.blocked-by.length} candidate(s):"
+      for b in e.blocked-by
+        line.push "", "  #{b.candidate.name} ( rank #{b.candidate.rank} ), path strength #{b.strength.0}:#{b.strength.1}"
+        if b.indirect =>
+          line.push "    #{e.candidate.name} wins the head to head #{b.direct.lose}:#{b.direct.win}, overruled by this chain:"
+        for h in (b.path or []) => line.push "      #{hop h}"
+    if e.tied-with.length =>
+      line.push "", "tied with: #{e.tied-with.map(->it.name).join(', ')}"
+    if e.rank-from.above.length != e.blocked-by.length =>
+      line.push(
+        ""
+        "rank #{e.candidate.rank} is 1 + the #{e.rank-from.above.length} candidate(s) placed above it,"
+        "which is more than the #{e.blocked-by.length} beating it - ties above take up numbers too."
+      )
+    return line.join(\\n).trim!
+
   from-array-sync: (data, opt = {}) ->
     @opt = opt = {} <<< input-default-options <<< opt
     @data = data

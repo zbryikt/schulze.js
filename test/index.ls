@@ -129,3 +129,83 @@ describe 'output format edge cases', ->
       '"a""b",1'
       new Error("output mismatch")
     )
+
+# deterministic pseudo random, so a failing case is reproducible
+rand = do ->
+  seed = 20260827
+  -> (seed := (seed * 1103515245 + 12345) % 2147483648) / 2147483648
+
+random-dataset = (C, J) ->
+  [([''] ++ [0 til C].map(-> "c#it"))] ++ [0 til J].map (j) ->
+    ["j#j"] ++ [0 til C].map -> Math.floor(rand! * 4)
+
+describe 'explanation', ->
+  # `pred` is written by strength-of-strongest-path-matrix but was never read until
+  # `path` came along, so pin its invariant down: every rebuilt path must be a real
+  # chain whose weakest link is exactly the strength recorded in P.
+  that "path rebuilds a real strongest path for every pair", ->
+    checked = 0
+    for t from 0 til 40
+      vote = new schulze!
+      C = 3 + Math.floor(rand! * 5)
+      vote.from-array-sync random-dataset(C, 2 + Math.floor(rand! * 6)), {show-warning: false}
+      for e from 0 til C => for f from 0 til C
+        if e == f => continue
+        hops = vote.path e, f
+        assert.ok (hops and hops.length), new Error("no path rebuilt for #e -> #f")
+        assert.equal hops.0.from, e, new Error("path does not start at #e")
+        assert.equal hops[hops.length - 1].to, f, new Error("path does not end at #f")
+        weakest = hops.reduce ((a, h) -> if !a => [h.win, h.lose] else vote.min a, [h.win, h.lose]), null
+        assert.deep-strict-equal weakest, vote.P[e][f], new Error("weakest link != P[#e][#f]")
+        checked++
+    assert.ok (checked > 500), new Error("expected a decent number of pairs, got #checked")
+
+  that "rank is 1 + the candidates placed above, which may exceed the beaten-by count", ->
+    loose = 0
+    for t from 0 til 40
+      vote = new schulze!
+      C = 3 + Math.floor(rand! * 5)
+      out = vote.from-array-sync random-dataset(C, 2 + Math.floor(rand! * 6)), {show-warning: false}
+      for c in out.candidates
+        e = vote.explain c.idx
+        assert.equal e.candidate.rank, e.rank-from.above.length + 1, new Error("rank mismatch")
+        if e.rank-from.above.length > e.blocked-by.length => loose := loose + 1
+    # the two counts differing is the whole reason `rank-from` exists - make sure the
+    # dataset actually exercises it, or this test proves nothing.
+    assert.ok (loose > 0), new Error("no case where ties above inflate the rank")
+
+  that "explain reports the chain that overrules a head to head ( wiki dataset )", ->
+    vote = new schulze!
+    vote.from-csv(
+      fs.read-file-sync('dataset/wiki-schulze-method/dataset.csv').toString!
+      {is-row-based: true, higher-is-better: false, show-warning: false}
+    )
+      .then ->
+        e = vote.explain \c
+        assert.equal e.candidate.rank, 3, new Error("unexpected rank")
+        assert.deep-strict-equal e.blocked-by.map(->it.candidate.name), <[e a]>, new Error("unexpected blockers")
+        [blocker] = e.blocked-by
+        assert.ok (blocker.indirect), new Error("e beating c should be an indirect win")
+        assert.deep-strict-equal blocker.direct, {win: 21, lose: 24}, new Error("head to head mismatch")
+        assert.deep-strict-equal(
+          blocker.path.map -> "#{vote.candidates[it.from].name}>#{vote.candidates[it.to].name} #{it.win}:#{it.lose}"
+          ['e>d 31:14', 'd>c 28:17']
+          new Error("unexpected chain")
+        )
+        assert.ok (/overruled by this chain/.exec(vote.to-explanation \c)), new Error("text form lost the chain")
+
+  that "the top candidate is beaten by nobody", ->
+    vote = new schulze!
+    vote.from-array-sync(
+      [<[j A B C]>, ['j1', 3, 2, 1], ['j2', 3, 1, 2], ['j3', 3, 2, 1]]
+      {show-warning: false}
+    )
+    e = vote.explain \A
+    assert.equal e.candidate.rank, 1, new Error("A should win")
+    assert.deep-strict-equal e.blocked-by, [], new Error("nothing should beat A")
+    assert.ok (/nothing beats it/.exec(vote.to-explanation \A)), new Error("text form mismatch")
+
+  that "explain rejects an unknown candidate", ->
+    vote = new schulze!
+    vote.from-array-sync [<[j A B]>, ['j1', 1, 2]], {show-warning: false}
+    assert.throws (-> vote.explain \nope), /no such candidate/
